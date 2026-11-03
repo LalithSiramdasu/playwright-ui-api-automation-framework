@@ -1,0 +1,47 @@
+name: Automated UI and API Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  quality-and-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Check standalone API integration tests
+        run: npm run test:server
+      - name: Install browsers and OS dependencies
+        run: npx playwright install --with-deps
+      - name: Run UI and API tests (Chromium, Firefox, WebKit)
+        run: npm test
+        env:
+          CI: 'true'
+      - name: Upload reports on success or failure
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: |
+            playwright-report/
+            test-results/
+            reports/
+          retention-days: 14

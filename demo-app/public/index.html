@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QA Demo Shop | Automation practice application</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div><p class="eyebrow">Test automation practice app</p><h1>QA Demo Shop</h1></div>
+        <p class="hint">A local, deterministic test target with a real API</p>
+      </header>
+
+      <section id="login-screen" class="panel" aria-label="Sign in">
+        <h2>Sign in to the demo</h2>
+        <p>Use <strong>demo@example.com</strong> and <strong>Password123!</strong></p>
+        <form id="login-form">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="username" required />
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required />
+          <button type="submit">Sign in</button>
+        </form>
+        <p id="login-error" role="alert" class="error" hidden></p>
+      </section>
+
+      <section id="shop-screen" hidden aria-label="Shop">
+        <div class="toolbar">
+          <h2>Demo Shop</h2>
+          <button type="button" id="logout" class="secondary">Log out</button>
+        </div>
+        <div class="layout">
+          <section class="panel" aria-label="Product catalog">
+            <div class="filters">
+              <label for="search">Search products</label>
+              <input type="search" id="search" placeholder="Find a product" />
+              <label for="category">Product category</label>
+              <select id="category">
+                <option value="">All categories</option>
+                <option>Electronics</option>
+                <option>Stationery</option>
+                <option>Lifestyle</option>
+              </select>
+            </div>
+            <div id="products" class="product-grid" aria-live="polite"></div>
+          </section>
+          <aside class="panel cart" aria-label="Shopping cart">
+            <h3>Shopping cart</h3>
+            <p>Items: <strong data-testid="cart-count">0</strong></p>
+            <ul id="cart-items"></ul>
+            <p class="total">Total: <strong data-testid="cart-total">$0.00</strong></p>
+            <button id="place-order" type="button" disabled>Place order</button>
+            <p id="order-status" role="status" aria-live="polite"></p>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
