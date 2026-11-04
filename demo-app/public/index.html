@@ -3,60 +3,111 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QA Demo Shop | Automation practice application</title>
+    <meta name="theme-color" content="#17191c" />
+    <meta name="description" content="Good Form is an intentionally controlled shopping experience for validating UI and API quality with Playwright." />
+    <title>Good Form — QA Demo Shop</title>
     <link rel="stylesheet" href="/styles.css" />
     <script src="/app.js" defer></script>
   </head>
   <body>
-    <main class="shell">
-      <header class="topbar">
-        <div><p class="eyebrow">Test automation practice app</p><h1>QA Demo Shop</h1></div>
-        <p class="hint">A local, deterministic test target with a real API</p>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="site-frame">
+      <header class="site-header">
+        <div class="identity" aria-label="Good Form demo store">
+          <span class="identity-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span class="identity-text">GOOD FORM<span class="identity-subtitle">OBJECTS FOR EVERY DAY</span></span>
+        </div>
+        <div class="header-meta">
+          <span class="environment-indicator"><span aria-hidden="true"></span> CONTROLLED TEST ENVIRONMENT</span>
+          <span class="header-edition">EDITION / 001</span>
+        </div>
       </header>
 
-      <section id="login-screen" class="panel" aria-label="Sign in">
-        <h2>Sign in to the demo</h2>
-        <p>Use <strong>demo@example.com</strong> and <strong>Password123!</strong></p>
-        <form id="login-form">
-          <label for="email">Email address</label>
-          <input id="email" name="email" type="email" autocomplete="username" required />
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required />
-          <button type="submit">Sign in</button>
-        </form>
-        <p id="login-error" role="alert" class="error" hidden></p>
-      </section>
-
-      <section id="shop-screen" hidden aria-label="Shop">
-        <div class="toolbar">
-          <h2>Demo Shop</h2>
-          <button type="button" id="logout" class="secondary">Log out</button>
-        </div>
-        <div class="layout">
-          <section class="panel" aria-label="Product catalog">
-            <div class="filters">
-              <label for="search">Search products</label>
-              <input type="search" id="search" placeholder="Find a product" />
-              <label for="category">Product category</label>
-              <select id="category">
-                <option value="">All categories</option>
-                <option>Electronics</option>
-                <option>Stationery</option>
-                <option>Lifestyle</option>
-              </select>
+      <main id="main-content" class="main-content">
+        <section id="login-screen" class="login-layout" aria-label="Sign in">
+          <div class="editorial-intro">
+            <p class="section-index">01 / THE EVERYDAY EDIT</p>
+            <h1>Useful objects.<br /><span>Quietly considered.</span></h1>
+            <p class="intro-description">A small collection of daily essentials, made for exploring the details that make a digital shopping experience work.</p>
+            <div class="intro-art" aria-hidden="true">
+              <div class="intro-art-grid"></div>
+              <div class="intro-art-circle"></div>
+              <div class="intro-art-object"></div>
+              <p class="art-label">COLLECTION 001<br />DESIGNED TO BE TESTED</p>
+              <span class="art-coordinate">01 — 03</span>
             </div>
-            <div id="products" class="product-grid" aria-live="polite"></div>
+            <div class="intro-caption"><span class="caption-line"></span> A PRACTICE STOREFRONT WITH A REAL LOCAL API</div>
+          </div>
+
+          <div class="login-pane">
+            <div class="login-card">
+              <span class="card-overline">WELCOME BACK / 001</span>
+              <h2>Sign in to the demo</h2>
+              <p class="card-description">Explore the collection and try the checkout flow. Nothing here is purchased or charged.</p>
+              <form id="login-form">
+                <div class="form-field">
+                  <label for="email">Email address</label>
+                  <input id="email" name="email" type="email" autocomplete="username" placeholder="you@example.com" required />
+                </div>
+                <div class="form-field">
+                  <label for="password">Password</label>
+                  <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+                </div>
+                <button id="sign-in-button" class="button button-primary sign-in-button" type="submit">Sign in <span aria-hidden="true">↗</span></button>
+              </form>
+              <p id="login-error" role="alert" class="form-error" hidden></p>
+              <div class="demo-credentials">
+                <p>DEMO ACCOUNT <span>ONLY FOR THIS LOCAL PROJECT</span></p>
+                <dl><div><dt>Email</dt><dd>demo@example.com</dd></div><div><dt>Password</dt><dd>Password123!</dd></div></dl>
+              </div>
+              <p class="login-footnote">No real account, payment, or personal data is required.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="shop-screen" aria-label="Shop" hidden>
+          <div class="shop-heading-row">
+            <div class="shop-heading">
+              <p class="section-index">THE SHOP / LOCAL EDITION</p>
+              <h2>Demo Shop</h2>
+              <p>Three everyday essentials. One carefully testable experience.</p>
+            </div>
+            <button type="button" id="logout" class="button button-text">Log out <span aria-hidden="true">↗</span></button>
+          </div>
+
+          <div class="shop-navigation" aria-label="Shop sections">
+            <button type="button" id="nav-shop" class="navigation-item is-active" aria-pressed="true">The collection <span>03</span></button>
+            <button type="button" id="nav-states" class="navigation-item" aria-pressed="false">Experience lab <span>10</span></button>
+          </div>
+
+          <div id="shop-content" class="shop-layout">
+            <section class="catalog-panel" aria-label="Product catalog">
+              <div class="catalog-intro"><div><span class="overline">COLLECTION / 001</span><h3>Things worth keeping.</h3></div><p>Designed for the days between big moments.</p></div>
+              <div class="filter-bar">
+                <div class="filter-field search-field"><label for="search">Search products</label><div class="input-wrap"><span aria-hidden="true" class="search-icon"></span><input type="search" id="search" placeholder="Try “mouse” or “bottle”" autocomplete="off" /></div></div>
+                <div class="filter-field category-field"><label for="category">Product category</label><select id="category"><option value="">All categories</option><option>Electronics</option><option>Stationery</option><option>Lifestyle</option></select></div>
+              </div>
+              <div class="catalog-meta"><span id="result-count">03 PIECES IN THE COLLECTION</span><span>SELECTED OBJECTS / 2026</span></div>
+              <div id="products" class="product-grid" aria-live="polite"></div>
+            </section>
+
+            <aside class="cart-panel" aria-label="Shopping cart">
+              <div class="cart-topline"><span class="overline">YOUR SELECTION</span><span class="cart-bag-icon" aria-hidden="true"></span></div>
+              <h3>Shopping cart <span data-testid="cart-count">0</span></h3>
+              <p class="cart-description">A simple checkout, built to exercise the full purchase journey.</p>
+              <div id="cart-empty" class="cart-empty"><span class="empty-bag" aria-hidden="true"></span><strong>Your bag is empty.</strong><p>A good start is finding something you like.</p><button type="button" id="browse-catalog" class="link-button">Explore the collection <span aria-hidden="true">↗</span></button></div>
+              <ul id="cart-items" class="cart-items"></ul>
+              <div class="cart-summary"><div><span>Subtotal</span><strong data-testid="cart-total">$0.00</strong></div><p>No real payment will be collected.</p><button id="place-order" class="button button-primary checkout-button" type="button" disabled>Place order <span aria-hidden="true">↗</span></button><p id="order-status" role="status" aria-live="polite" class="order-status"></p></div>
+            </aside>
+          </div>
+
+          <section id="states-content" class="state-library" hidden aria-label="Experience state library">
+            <div class="state-library-intro"><div><span class="overline">QA PLAYGROUND / 10 STATES</span><h3>Designed for every condition.</h3><p>A deliberate set of interaction states for testing the moments between the happy paths.</p></div><p class="state-note">These fixtures simulate rare conditions without altering server data. Real catalog, login, and checkout paths remain testable in the collection.</p></div>
+            <div class="state-library-layout"><div><h4 class="state-group-title">SELECT A STATE <span>01 — 10</span></h4><div id="state-options" class="state-options"></div></div><div class="state-preview-shell"><div class="preview-topline"><span>LIVE PREVIEW / LOCAL ONLY</span><span class="preview-dot"></span></div><div id="state-preview" class="state-preview-placeholder"><span class="preview-placeholder-icon" aria-hidden="true">✳</span><h4>Choose a condition.</h4><p>Explore a state on the left to see its messaging and recovery action here.</p></div></div></div>
           </section>
-          <aside class="panel cart" aria-label="Shopping cart">
-            <h3>Shopping cart</h3>
-            <p>Items: <strong data-testid="cart-count">0</strong></p>
-            <ul id="cart-items"></ul>
-            <p class="total">Total: <strong data-testid="cart-total">$0.00</strong></p>
-            <button id="place-order" type="button" disabled>Place order</button>
-            <p id="order-status" role="status" aria-live="polite"></p>
-          </aside>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+      <footer class="site-footer"><span>© GOOD FORM / A TESTING WORKSPACE</span><span>LOCAL APPLICATION · NO REAL TRANSACTIONS</span><span>BUILT FOR QUALITY, NOT COMMERCE.</span></footer>
+    </div>
   </body>
 </html>

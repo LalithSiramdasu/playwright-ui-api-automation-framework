@@ -24,3 +24,30 @@ Order	Suite	What you'll learn
 4	Regression	Testing existing features after changes
 5	UI	Browser interactions and Page Object Model
 6	Full validation	Cross-browser execution and complete test coverage
+
+
+============================================================
+RESTORE THE COMPLETE PROJECT AFTER DELETING THE LOCAL FOLDER
+============================================================
+
+# Run from the parent folder in a Windows CMD terminal (Git and Node.js required):
+git clone https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework.git
+cd playwright-ui-api-automation-framework
+
+# Reinstall dependencies and Playwright browsers:
+npm ci
+npx playwright install
+npm --prefix dashboard ci
+
+# Build and start the QA Control Center at http://127.0.0.1:4300:
+npm run dashboard
+
+# Optional: in a second terminal, launch the redesigned shopping test app at http://127.0.0.1:4173:
+npm run demo:start
+
+# Optional: run the full local Playwright suite (from the project root):
+npm test
+
+# Note: dashboard/data/ is ignored by Git and won't return after cloning.
+# Back up local test history/reports separately if you need to preserve past analytics.
+# Never put real API keys or production passwords in this public repository.

@@ -103,6 +103,16 @@ Open **http://127.0.0.1:4300**. The dashboard runs *only on localhost* and runs 
 
 See **[Dashboard guide](docs/DASHBOARD.md)** for setup, architecture, security, and result semantics.
 
+## Good Form — redesigned shopping test target
+
+The bundled `demo-app/` now uses a **cool steel-grey editorial storefront** with custom CSS product visuals, stronger responsive composition, and meaningful loading/error/recovery interactions. The core UI locators and REST endpoints used by the existing Playwright suite remain stable.
+
+After signing in, switch to **Experience lab** to inspect the 10 controlled states supplied in the reference video: empty, loading, error, offline, slow network, no results, permission denied, session expired, form validation and success. They are **explicitly labeled reproducible QA fixtures**, not claims about real production network failures.
+
+See **[storefront design rationale, UX states and skill references](docs/STORE_DESIGN.md)**. The new cases in `tests/ui/states.spec.ts` check the 10 fixtures and recovery behaviors. Run `npm run demo:start` to explore at `http://127.0.0.1:4173`.
+
+To restore the project later, the original `commands.txt` now includes the exact `git clone` / `npm ci` commands without removing any of your existing notes.
+
 ## Useful test commands
 
 | Command | Purpose |
