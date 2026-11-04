@@ -55,3 +55,7 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - `npm run test:server`: **31 tests passed**, including project-runner preflight, isolation, dashboard invalid selection and separate API fixture tests.
 - CLI `--dry-run`: passed for Northline Chromium smoke and Sample API.
 - TypeScript, lint, full Playwright browser and Sample API Playwright suites: pending the Module 2 commit's GitHub Actions run. Do not attribute older CI runs to this code.
+
+## Module 2 CI correction
+
+The initial Module 2 commit (`9a03ca6d`) passed typecheck, lint, profile validation and 31 standalone tests, but the Playwright TypeScript config loader attempted to transform an imported Node ESM module containing `import.meta.url` as CommonJS. The follow-up fix reads the data-only profile directly inside `playwright.config.ts`; CLI/dashboard continue to perform the shared Node ESM preflight. Cross-browser verification requires the corrected commit's own GitHub Actions run.
