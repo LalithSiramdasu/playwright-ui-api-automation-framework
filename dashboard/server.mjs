@@ -7,6 +7,7 @@ import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node
 import { fileURLToPath } from 'node:url';
 import { SUITES, summarizeReport } from './reporting.mjs';
 import { loadProjectRegistry } from '../src/core/project-registry.mjs';
+import { resolveProjectRun, makePlaywrightArguments, selectionEnvironment, RunConfigurationError } from '../src/core/project-runner.mjs';
 
 const dashboardDir = dirname(fileURLToPath(import.meta.url));
 const root = resolve(dashboardDir, '..');
@@ -76,9 +77,10 @@ function recordForList(run) {
   delete summary.cases;
   return summary;
 }
-function startRun(suite, browser) {
+function startRun(selection) {
+  const { suite, browser, projectId, environment } = selection;
   const run = {
-    id: randomUUID(), suite, browser, status: 'running', startedAt: new Date().toISOString(),
+    id: randomUUID(), suite, browser, projectId, environment, status: 'running', startedAt: new Date().toISOString(),
     finishedAt: null, durationMs: 0, counts: null, cases: [], logs: [], exitCode: null,
   };
   runs.unshift(run);
@@ -88,17 +90,13 @@ function startRun(suite, browser) {
   const folder = join(artifactDir, run.id);
   const htmlDir = join(folder, 'html');
   mkdirSync(folder, { recursive: true });
-  const args = [playwrightCli, 'test'];
-  if (suite === 'api') args.push('tests/api');
-  if (suite === 'ui') args.push('tests/ui');
-  if (['smoke', 'regression', 'negative', 'accessibility'].includes(suite)) args.push('--grep', `@${suite}`);
-  if (suite !== 'api' && browser !== 'all') args.push(`--project=${browser}`);
+  const args = [playwrightCli, ...makePlaywrightArguments(selection)];
   args.push('--reporter=line,json,html', '--output', join(folder, 'test-results'));
-  appendLog(run, `Executing: Playwright ${suite} suite (${browser})`);
+  appendLog(run, `Executing: ${projectId}/${environment} — Playwright ${suite} suite (${browser})`);
   const child = spawn(process.execPath, args, {
     cwd: root,
     env: {
-      ...process.env, CI: 'true', FORCE_COLOR: '0',
+      ...selectionEnvironment(selection), CI: 'true', FORCE_COLOR: '0',
       PLAYWRIGHT_JSON_OUTPUT_FILE: join(folder, 'results.json'),
       PLAYWRIGHT_HTML_OUTPUT_DIR: htmlDir, PLAYWRIGHT_HTML_OPEN: 'never',
     },
@@ -148,7 +146,7 @@ const server = createServer(async (req, res) => {
       const projects = loadProjectRegistry().map(({ id, name, type, enabled, environments, suites }) => ({
         id, name, type, enabled, environments: Object.keys(environments), suites,
       }));
-      return send(res, 200, { projects, executionMode: 'demo-only' });
+      return send(res, 200, { projects, executionMode: 'project-aware' });
     }
     if (req.method === 'GET' && pathname === '/api/runs') {
       return send(res, 200, { runs: runs.map(recordForList), activeId });
@@ -164,15 +162,18 @@ const server = createServer(async (req, res) => {
       }
       if (pathname === '/api/runs') {
         const body = await parseBody(req);
-        const suite = body?.suite;
-        const browser = body?.browser ?? 'all';
-        if (!SUITES.some((item) => item.id === suite) || !['all', 'chromium', 'firefox', 'webkit'].includes(browser)) {
-          return send(res, 400, { error: 'Unsupported suite or browser' });
+        // Older dashboard clients omit projectId/environment; default to Northline/local.
+        // Reject arbitrary input fields rather than forwarding them to Playwright.
+        let selection;
+        try {
+          selection = resolveProjectRun(body);
+        } catch (error) {
+          if (error instanceof RunConfigurationError) return send(res, 400, { error: error.message });
+          throw error;
         }
-        if (suite === 'api' && browser !== 'all') return send(res, 400, { error: 'API suite does not use a browser' });
         if (activeProcess) return send(res, 409, { error: 'Another suite is already running' });
         if (!existsSync(playwrightCli)) return send(res, 409, { error: 'Playwright is not installed. Run npm install at repository root.' });
-        const run = startRun(suite, browser);
+        const run = startRun(selection);
         return send(res, 202, { run: recordForList(run) });
       }
       if (segments[0] === 'api' && segments[1] === 'runs' && segments[3] === 'cancel' && segments.length === 4) {

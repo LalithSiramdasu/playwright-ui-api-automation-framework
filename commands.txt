@@ -63,3 +63,21 @@ npm run test:server
 # With the QA dashboard running, inspect read-only project metadata:
 # http://127.0.0.1:4300/api/projects
 # Module 2 will add safe selection/execution for additional projects.
+
+============================================================
+MODULE 2 — PROJECT-AWARE RUNNER
+============================================================
+
+# Validate the project registry and local-only runner:
+npm run projects:validate
+npm run test:server
+
+# Preview two independent project runs without executing them:
+node scripts/run-project.mjs --project northline-goods --environment local --suite smoke --browser chromium --dry-run
+node scripts/run-project.mjs --project sample-api --environment local --suite api --dry-run
+
+# Execute Northline smoke tests or the independent sample API:
+node scripts/run-project.mjs --project northline-goods --environment local --suite smoke --browser chromium
+npm run test:sample-api
+
+# Read docs/PROJECT_RUNNER.md for setup and safety limitations.

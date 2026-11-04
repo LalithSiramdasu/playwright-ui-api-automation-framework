@@ -68,9 +68,29 @@ test('dashboard rejects invalid suites and untrusted origins', async () => {
 test('dashboard lists validated project profiles without exposing URLs or secrets', async () => {
   const response = await request('/api/projects');
   assert.equal(response.status, 200);
-  assert.equal(response.body.executionMode, 'demo-only');
-  assert.deepEqual(response.body.projects.map((project) => project.id), ['northline-goods', 'starter-api']);
-  assert.equal(response.body.projects[1].enabled, false);
+  assert.equal(response.body.executionMode, 'project-aware');
+  assert.deepEqual(response.body.projects.map((project) => project.id), ['northline-goods', 'sample-api', 'starter-api']);
+  assert.equal(response.body.projects[1].enabled, true);
+  assert.equal(response.body.projects[2].enabled, false);
   assert.equal(JSON.stringify(response.body).includes('STARTER_API_TOKEN'), false);
   assert.equal(JSON.stringify(response.body).includes('api.example.test'), false);
+});
+
+
+test('dashboard project preflight rejects disabled, unknown and unsafe targets before spawning', async () => {
+  for (const payload of [
+    { projectId: 'starter-api', environment: 'staging', suite: 'api' },
+    { projectId: '../sample-api', environment: 'local', suite: 'api' },
+    { projectId: 'sample-api', environment: 'production', suite: 'api' },
+    { projectId: 'sample-api', environment: 'local', suite: 'ui' },
+    { projectId: 'sample-api', environment: 'local', suite: 'api', browser: 'chromium' },
+    { projectId: 'sample-api', environment: 'local', suite: 'api', command: 'rm -rf .'}
+  ]) {
+    const response = await request('/api/runs', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    assert.equal(response.status, 400, JSON.stringify(payload));
+    assert.equal(typeof response.body.error, 'string');
+  }
 });

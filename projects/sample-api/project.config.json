@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "sample-api",
+  "name": "Independent Sample API",
+  "type": "api",
+  "enabled": true,
+  "allowedHosts": ["127.0.0.1"],
+  "environments": {
+    "local": {
+      "apiBaseUrl": "http://127.0.0.1:4174",
+      "readOnly": false
+    }
+  },
+  "suites": ["smoke", "api", "regression", "negative"],
+  "credentialEnv": {}
+}

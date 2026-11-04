@@ -11,6 +11,14 @@
 - GitHub Actions for dashboard build, lint, typecheck, standalone API and full Playwright execution.
 - Documentation, setup commands, source control and `.gitignore` for local test history.
 
+## Module 2 implementation milestone — local project-aware runner
+
+- Two independently runnable local targets: Northline Goods (hybrid) and an isolated Sample API.
+- Validated project/environment/suite/browser preflight with fail-closed remote/read-only behavior.
+- Separate Playwright test discovery paths; no arbitrary commands or test-directory values from the dashboard.
+- CLI runner and dashboard POST endpoint now honor explicit project selections. Existing dashboard buttons default to Northline Goods.
+- **Next:** Modules 3–5 add reusable external website/API test adapters, secret handling and authorized remote-target policy. Module 6 provides graphical project selection and per-project analytics.
+
 ## P1 — Reliability and coverage (next)
 
 | Work | Definition of done |

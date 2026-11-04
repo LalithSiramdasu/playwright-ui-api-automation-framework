@@ -35,3 +35,11 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - The demo shop's historical selectors, API endpoints, and bundled Playwright tests remain stable.
 - `GET /api/projects` is read-only discovery; do not claim multi-project execution until Module 2.
 - Never store credentials in profiles or return their values via dashboard APIs.
+
+## Module 2 project-aware execution
+
+- The default root `tests/` directory is Northline-only; new projects must use `projects/<id>/tests/`.
+- Profiles are **data**, never command definitions or arbitrary file paths. The hardcoded local sample server mappings live in `playwright.config.ts`.
+- Module 2 blocks all remote and read-only targets until Module 5 adds reviewed safe-run policy. Do not remove that safeguard merely to make an external test run.
+- Keep `node scripts/run-project.mjs` and the dashboard's `POST /api/runs` on the same shared `resolveProjectRun` preflight.
+- Module 6 adds a visual project switcher; do not claim the current dashboard UI has one.

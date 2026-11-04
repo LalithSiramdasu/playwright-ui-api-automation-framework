@@ -48,3 +48,10 @@ At initial assembly, the dependency-free API suite passed **5/5** and Node synta
 | Dashboard React build, TypeScript, ESLint | Must be checked in GitHub Actions for the new commit |
 
 These checks exercise profile validation and non-breaking dashboard discovery, **not multi-project test execution**. Module 2 will implement actual project-specific dispatch.
+
+## Module 2 local checks (before GitHub Actions)
+
+- `npm run projects:validate`: 3 profiles validated (2 enabled local, 1 disabled template).
+- `npm run test:server`: **31 tests passed**, including project-runner preflight, isolation, dashboard invalid selection and separate API fixture tests.
+- CLI `--dry-run`: passed for Northline Chromium smoke and Sample API.
+- TypeScript, lint, full Playwright browser and Sample API Playwright suites: pending the Module 2 commit's GitHub Actions run. Do not attribute older CI runs to this code.
