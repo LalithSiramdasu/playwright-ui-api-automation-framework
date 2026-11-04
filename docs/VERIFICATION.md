@@ -118,3 +118,11 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - `node --check` on new onboarding/CLI modules: passed.
 - Actual external requests performed by Module 10: **none**. No real business target was supplied.
 - React build, TypeScript, ESLint and full Playwright tests: **require confirmation from the Module 10 commit's own GitHub Actions run**; older green runs do not verify this release.
+
+## External QA practice pilots — user-provided execution evidence (4–5 November 2026)
+
+- The Internet (Chromium, `pilot-the-internet`, external practice site): two locally executed full runs, **8/8 passed (41.0 s)** and **8/8 passed (38.3 s)**. The supplied HTML report screenshot shows 8 passed, 0 failed, 0 flaky, 0 skipped.
+- JSONPlaceholder (`pilot-jsonplaceholder`, external read-only REST API): smoke **2/2 passed (1.3 s)**, full API **8/8 passed (2.3 s)**. The supplied HTML report screenshot shows 8 passed, 0 failed, 0 flaky, 0 skipped.
+- These are **16 distinct cases**, with **26 passed case executions across four runs**. The user ran the tests from Windows CMD and cleared temporary remote host approvals. Evidence is the operator-provided console transcripts/screenshots, not archived raw GitHub CI artifacts.
+- The test case mappings and limitations are recorded in [External Pilot Execution Evidence](EXTERNAL_PILOT_EXECUTION_EVIDENCE.md). Both remote suites remain **excluded from normal CI**; there is no owner-authorized business-client validation claim.
+- The preceding Module 10 release `04c9ca7` completed GitHub Actions successfully in [run 41862170645](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41862170645). The current documentation commit's CI must be checked separately and must not be represented as having rerun external public hosts.

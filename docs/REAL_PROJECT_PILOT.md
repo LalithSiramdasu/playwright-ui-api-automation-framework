@@ -2,6 +2,8 @@
 
 **Implementation status:** Two opt-in external **QA practice** targets are configured and 16 real Playwright assertions are authored. Static registry, policy, and coverage checks run automatically; **the public-site/browser tests are not run in normal CI**. Testing a genuine user-owned application with agreed requirements still requires an authorized target and test credentials. Do not describe that final acceptance as complete until evidence exists.
 
+**Live practice-run evidence added (4–5 November 2026):** The operator provided Windows CMD execution logs and HTML screenshots showing **8/8 website tests passed twice in Chromium**, **2/2 API smoke checks**, and **8/8 full API checks**. See the reviewed [external pilot execution evidence report](EXTERNAL_PILOT_EXECUTION_EVIDENCE.md). The results are local execution evidence, not external tests run in GitHub Actions or a genuine business-client pilot.
+
 ## Why these targets?
 
 1. **JSONPlaceholder** is a publicly hosted fake REST service specifically offered for testing and prototyping: https://jsonplaceholder.typicode.com. Our adapter tests public GET responses and relationships, not state-changing requests.
@@ -110,4 +112,4 @@ This remains **pending** until you provide an application you control or have ex
 5. Verify isolation from Northline Goods and Sample API, and create an authorized CI strategy only after secrets, permission scopes and audit requirements are reviewed. The existing Module 8 CI workflow intentionally **does not run external targets**.
 6. Record the full end-to-end outcome, including exact run evidence. A website's URL alone cannot reveal correct business logic, and this framework cannot automatically assert unspecified requirements.
 
-**Current release acceptance:** External pilot *code/configuration and safe preflight* complete; actual end-to-end owner-authorized business-project validation pending. Automated CI confirms that existing local projects and security gates are not broken.
+**Current release acceptance:** External practice pilot code, safe preflight, and user-executed website/API checks are now documented in [the evidence report](EXTERNAL_PILOT_EXECUTION_EVIDENCE.md). A genuine end-to-end owner-authorized **business-project** validation remains pending. Normal GitHub CI verifies existing local suites and safety gates, not the two external hosts.

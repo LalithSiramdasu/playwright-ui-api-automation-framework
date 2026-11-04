@@ -169,6 +169,8 @@ Two **public services intended for QA practice** now have fully separated projec
 
 Run `npm run pilots:validate` for an offline requirements-to-test traceability audit. See **[Module 9 pilot runbook](docs/REAL_PROJECT_PILOT.md)** for commands and limitations. An actual owner-authorized business-application validation is still required before claiming production readiness.
 
+**Observed practice-run results (4–5 Nov 2026, user-executed locally):** The Internet — 8/8 Chromium checks passed twice (41.0 s and 38.3 s); JSONPlaceholder — 2/2 API smoke checks (1.3 s) and 8/8 full API checks (2.3 s). See **[external pilot execution evidence](docs/EXTERNAL_PILOT_EXECUTION_EVIDENCE.md)** for the case matrix, provenance and limits. These external runs are **not** part of standard CI and do not constitute client-owned application validation.
+
 ## Module 10 — onboard an authorized project safely
 
 Run `npm run project:onboard -- --project client-catalog --name "Client Catalog QA" --type api --url https://staging.example.org/v1/` for a **preview** of a disabled staging profile and placeholder tests. Add `--write` only to create the starter files. No external requests are made by the scaffold. Run `npm run project:readiness -- --project client-catalog` to see why execution is still blocked until owner approval, reviewed functional tests, and privacy checks are complete. The Playwright runner enforces this gate for newly scaffolded projects. **No user-owned business pilot is claimed as verified yet.** See [Module 10 onboarding guide](docs/REAL_PROJECT_ONBOARDING.md).
