@@ -19,19 +19,20 @@
 - CLI runner and dashboard POST endpoint now honor explicit project selections. Existing dashboard buttons default to Northline Goods.
 - **Next:** Modules 3–5 add reusable external website/API test adapters, secret handling and authorized remote-target policy. Module 6 provides graphical project selection and per-project analytics.
 
-## Module 3 implementation milestone — reusable website automation
-
-- Shared Page Object helpers, accessible form login, browser-context API-cookie sessions and redacted browser diagnostics in `src/web/`.
-- An isolated Sample Website profile with a real local server, guarded pages, project-specific Page Objects, and Chromium/Firefox/WebKit UI scenarios.
-- A third independent CI test suite; preserve Northline Goods and Sample API isolation. [Website automation guide](WEBSITE_AUTOMATION.md).
-- **Next:** Module 4 REST API clients and contract verification; Module 5 approved remote-target safeguards.
-
 ## Module 4 implementation milestone — reusable REST API automation
 
 - Shared typed API client and per-test fixtures support REST verbs, query parameters, bearer and API-key authentication.
 - A limited, explicitly documented JSON contract validator checks status, Content-Type and response structure.
 - Independent Sample API now includes token login and authenticated read-only endpoints with negative scenarios.
 - **Next:** Module 5 implements secrets/redaction, target authorization, test data isolation and safe execution policies for external APIs/websites.
+
+## Module 5 milestone — controlled staging and isolated data
+
+- Shared target policy in CLI preflight and Playwright configuration. Remote staging requires reviewed HTTPS profile opt-in, a matching host approval variable and explicit `--allow-remote`; **production remains blocked**.
+- Restricted runs discover only dedicated `tests/safe/` cases; the local Sample API exposes a read-only staging simulation. This does not sandbox arbitrary test code.
+- Reusable GET-only API client; unique data namespaces with automated teardown, demonstrated against an isolated local entity API.
+- Dashboard log/test-error redaction and `.env.*` exclusions. Raw artifacts still need careful handling.
+- **Next:** Module 6 dashboard project selector and honest environment/suite availability, preserving the fail-closed remote approval requirement. See [Module 5 safe-execution guide](SECURE_EXECUTION.md).
 
 ## P1 — Reliability and coverage (next)
 

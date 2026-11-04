@@ -44,12 +44,6 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Keep `node scripts/run-project.mjs` and the dashboard's `POST /api/runs` on the same shared `resolveProjectRun` preflight.
 - Module 6 adds a visual project switcher; do not claim the current dashboard UI has one.
 
-## Module 3 browser automation
-
-- Reusable browser helpers belong in `src/web/`; target-specific selectors, credentials and assertions stay in `projects/<id>/pages/` and `projects/<id>/tests/ui/`.
-- The independent `sample-web` fixture uses synthetic local credentials only. Never log raw credentials, browser storage state, Authorization headers, or query-string tokens.
-- Module 3 diagnostics are bounded and redact common secrets, but they are not a complete security boundary. Keep Module 2 remote-target safeguards until Module 5.
-
 ## Module 4 REST API testing contracts
 
 - Keep the reusable `src/api/` client independent of Northline and Sample API endpoints.
@@ -57,3 +51,11 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - The JSON checker supports a limited subset of JSON Schema, not complete OpenAPI/JSON Schema.
 - Do not bypass the runner's local-only restriction before Module 5 authorizes and constrains external targets.
 - Maintain old Sample API `/health` and `/api/inventory` contracts and run the full existing suite on each change.
+
+## Module 5 remote-execution and data safety
+
+- Do not weaken `assessTargetPolicy`: production and writable remote targets are always blocked; reviewed remote HTTPS staging needs approved project profile, `--allow-remote`, and exact matching `QA_REMOTE_APPROVAL`.
+- Dashboard intentionally cannot execute remote targets. No third-party/nonlocal URLs are run in the default CI workflow.
+- Restricted suites live only under `projects/<id>/tests/safe/`; each test must be reviewed for non-mutating behavior. Playwright is not a security sandbox.
+- Use `ReadOnlyApiClient` on staging API checks, `TestDataScope` for local mutable test records and cleanup, and never include secrets in Git or raw report screenshots.
+- Dashboard log redaction is defense-in-depth. HTML/JUnit/JSON reports and browser traces might contain secrets; do not claim they are fully sanitized.

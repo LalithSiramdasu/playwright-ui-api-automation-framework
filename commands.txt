@@ -83,27 +83,6 @@ npm run test:sample-api
 # Read docs/PROJECT_RUNNER.md for setup and safety limitations.
 
 ============================================================
-MODULE 3 — REUSABLE WEBSITE AUTOMATION
-============================================================
-
-npm run projects:validate
-npm run test:server
-
-# Dry run, no browser or server started:
-node scripts/run-project.mjs --project sample-web --environment local --suite smoke --browser chromium --dry-run
-
-# Smoke tests in Chromium:
-node scripts/run-project.mjs --project sample-web --environment local --suite smoke --browser chromium
-
-# Independent website tests on all three browsers:
-npm run test:sample-web
-
-# Optional local site at http://127.0.0.1:4175:
-npm run sample-web:start
-
-# Remote website execution requires Module 5 safety controls.
-
-============================================================
 MODULE 4 — REUSABLE REST API AUTOMATION
 ============================================================
 
@@ -119,3 +98,21 @@ npx playwright show-report playwright-report/sample-api/local
 
 # The Sample API starts automatically during the automated suite.
 # It uses fake localhost credentials only; real remote testing awaits Module 5.
+
+============================================================
+MODULE 5 — SAFE STAGING / TEST DATA
+============================================================
+
+npm run projects:validate
+npm run test:server
+npm run test:sample-api
+npm run test:sample-api-staging
+
+# Approved external HTTPS staging only, after reviewing the target/tests
+# Windows CMD example — replace the placeholder with YOUR authorized host:
+# set QA_REMOTE_APPROVAL=staging.your-company.example
+# node scripts/run-project.mjs --project approved-api --environment staging --suite smoke --allow-remote --dry-run
+# node scripts/run-project.mjs --project approved-api --environment staging --suite smoke --allow-remote
+# set QA_REMOTE_APPROVAL=
+
+# Never run destructive tests on production or commit credentials.

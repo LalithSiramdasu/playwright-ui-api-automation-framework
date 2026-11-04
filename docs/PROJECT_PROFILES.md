@@ -14,7 +14,6 @@ The former **Good Form** brand has been changed to **Northline Goods**; its loca
 | --- | --- | --- | --- |
 | `northline-goods` | hybrid (website + REST API) | configured | `http://127.0.0.1:4173` (local fixture) |
 | `sample-api` | REST API | configured | `http://127.0.0.1:4174` (independent local fixture) |
-| `sample-web` | website | configured | `http://127.0.0.1:4175` (independent local browser fixture) |
 | `starter-api` | REST API | **disabled template** | `https://api.example.test/v1/` (reserved, non-live example domain) |
 
 **Never enable `starter-api` as-is.** Replace its documentation-only URL with an authorized API, update the allowlist and add real project-specific tests in Module 2/4 before execution.
@@ -31,10 +30,9 @@ npm run test:server
 Expected validator output:
 
 ```text
-Validated 4 project profile(s):
+Validated 3 project profile(s):
 - northline-goods | hybrid | configured | local
 - sample-api | api | configured | local
-- sample-web | web | configured | local
 - starter-api | api | template disabled | staging
 Profiles validated. Use `npm run test:sample-api` to run the independent Module 2 fixture.
 ```
@@ -48,8 +46,8 @@ JSON files reside in `projects/<project-id>/project.config.json` and must use `s
 ```json
 {
   "schemaVersion": 1,
-  "id": "example-external-web",
-  "name": "Example Remote Website",
+  "id": "sample-web",
+  "name": "Sample Web Application",
   "type": "web",
   "enabled": false,
   "allowedHosts": ["staging.example.test"],
@@ -67,7 +65,7 @@ JSON files reside in `projects/<project-id>/project.config.json` and must use `s
 }
 ```
 
-`SAMPLE_USERNAME` and `SAMPLE_PASSWORD` are **environment-variable names**, not credentials. Never commit real passwords, tokens, cookies, or API keys. Add variable names to `.env.example` if useful; use a local ignored `.env` file or a CI secrets store for values. Module 2 implements separate per-project test directories. Module 3 adds reusable local website-authentication and browser-diagnostics helpers. Module 5 will add approved remote-target execution and stronger secrets handling.
+`SAMPLE_USERNAME` and `SAMPLE_PASSWORD` are **environment-variable names**, not credentials. Never commit real passwords, tokens, cookies, or API keys. Add variable names to `.env.example` if useful; use a local ignored `.env` file or a CI secrets store for values. Module 2 implements separate per-project test directories. Modules 3–5 will implement safer remote target execution, authentication injection, and log redaction.
 
 ## Validation rules
 
@@ -92,3 +90,7 @@ JSON files reside in `projects/<project-id>/project.config.json` and must use `s
 ## Module 2 runner
 
 The local-only project-aware runner and second independent API fixture are implemented. See [PROJECT_RUNNER.md](PROJECT_RUNNER.md). Remote read-only execution remains intentionally disabled until the safety features in Module 5. Module 6 adds the visual project selector.
+
+## Module 5 read-only staging opt-in
+
+Version-1 project profiles may include `remoteExecution: {"enabled": true}` for a reviewed **authorized HTTPS staging** project. This setting is not enough on its own: CLI also requires `--allow-remote` and `QA_REMOTE_APPROVAL` equal to the exact approved hostname. Production and write-enabled remote runs are rejected. Restricted staging tests must live under `projects/<id>/tests/safe/` and be audited for side effects. See [safe-execution guide](SECURE_EXECUTION.md). The dashboard has no remote-run consent UI at this stage.

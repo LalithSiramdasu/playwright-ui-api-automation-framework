@@ -3,6 +3,7 @@ import { readdirSync, realpathSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getEnabledProject, loadProjectRegistry } from './project-registry.mjs';
+import { assessTargetPolicy } from './execution-policy.cjs';
 
 export const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 export const DEFAULT_PROJECT = 'northline-goods';
@@ -31,15 +32,16 @@ function hasSpecs(directory) {
   }
   return false;
 }
-function trustedTestDirectory(root, projectId) {
+function trustedTestDirectory(root, projectId, restricted = false) {
   const target = projectId === DEFAULT_PROJECT
     ? join(root, 'tests') // Existing Northline suite remains untouched.
     : join(root, 'projects', projectId, 'tests');
+  const safeTarget = restricted ? join(target, 'safe') : target;
   let canonicalRoot;
   let canonicalTarget;
   try {
     canonicalRoot = realpathSync(root);
-    canonicalTarget = realpathSync(target);
+    canonicalTarget = realpathSync(safeTarget);
     if (!statSync(canonicalTarget).isDirectory()) fail('Project test directory is not a directory');
   } catch (error) {
     if (error instanceof RunConfigurationError) throw error;
@@ -67,11 +69,13 @@ export function resolveProjectRun(input = {}, options = {}) {
     fail(`Unknown or missing environment '${String(environment)}' for '${project.id}'`);
   }
   const target = project.environments[environment];
-  if (target.readOnly) fail(`Environment '${environment}' is read-only; automated execution is blocked until Module 5 safe-operation enforcement`);
-  const urls = [target.webBaseUrl, target.apiBaseUrl].filter(Boolean);
-  if (environment !== 'local' || urls.some((url) => !['localhost', '127.0.0.1', '[::1]'].includes(new URL(url).hostname))) {
-    fail('Module 2 executes only explicitly configured local fixtures; external targets require Module 5 safety controls');
-  }
+  let policy;
+  try {
+    policy = assessTargetPolicy(project, environment, {
+      remoteOptIn: options.remoteOptIn === true,
+      approval: options.environmentVariables?.QA_REMOTE_APPROVAL,
+    });
+  } catch (error) { fail(error.message); }
   const suite = input.suite ?? 'all';
   const browser = input.browser ?? 'all';
   if (typeof suite !== 'string' || !SUITE_LABELS.has(suite) || (suite !== 'all' && !project.suites.includes(suite))) {
@@ -81,10 +85,10 @@ export function resolveProjectRun(input = {}, options = {}) {
   if (project.type === 'api' && browser !== 'all') fail('API-only projects cannot select a browser');
   if (suite === 'api' && browser !== 'all') fail('API-only suite cannot select a browser');
   if (project.type === 'web' && suite === 'api') fail('Web-only projects cannot select API suite');
-  const testDir = trustedTestDirectory(root, project.id);
+  const testDir = trustedTestDirectory(root, project.id, policy.restricted);
   return Object.freeze({
     projectId: project.id, projectName: project.name, projectType: project.type,
-    environment, readOnly: target.readOnly, suite, browser,
+    environment, readOnly: target.readOnly, remote: policy.remote, restricted: policy.restricted, suite, browser,
     webBaseUrl: target.webBaseUrl ?? null, apiBaseUrl: target.apiBaseUrl ?? null,
     testDir,
   });
@@ -113,5 +117,6 @@ export function selectionEnvironment(selection, base = process.env) {
     QA_ENVIRONMENT: selection.environment,
     QA_SUITE: selection.suite,
     QA_BROWSER: selection.browser,
+    QA_ALLOW_REMOTE: selection.remote ? '1' : '0',
   };
 }

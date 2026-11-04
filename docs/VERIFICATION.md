@@ -56,20 +56,17 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - CLI `--dry-run`: passed for Northline Chromium smoke and Sample API.
 - TypeScript, lint, full Playwright browser and Sample API Playwright suites: pending the Module 2 commit's GitHub Actions run. Do not attribute older CI runs to this code.
 
-## Module 2 CI correction
-
-The initial Module 2 commit (`9a03ca6d`) passed typecheck, lint, profile validation and 31 standalone tests, but the Playwright TypeScript config loader attempted to transform an imported Node ESM module containing `import.meta.url` as CommonJS. The follow-up fix reads the data-only profile directly inside `playwright.config.ts`; CLI/dashboard continue to perform the shared Node ESM preflight. Cross-browser verification requires the corrected commit's own GitHub Actions run.
-
-## Module 3 local pre-push checks — 2026-11-04
-
-- Node syntax checks passed for the independent Sample Website server and its integration test file.
-- Manual local HTTP checks confirmed the healthy fixture, private-route redirect and successful cookie-based login response.
-- Full registered-profile validation, standalone tests, TypeScript, lint, dashboard build and browser suites must be checked on **this Module 3 commit's own CI run**; do not reuse older commit results.
-- Remote application execution remains blocked pending Module 5.
-
 ## Module 4 pre-push local verification (2026-11-04)
 
 - `node --test tests/server/sample-api.test.mjs tests/server/api-contract.test.mjs`: **10/10 passed** in the local working tree.
 - `node --check` on the JSON contract checker and updated sample API server: passed.
 - Full TypeScript, lint, dashboard build, all Playwright projects: verify using **this commit's own GitHub Actions run**, not earlier runs.
 - The 21 Sample Website tests passed in the user's Windows screenshot before Module 4; rerun CI to demonstrate no regressions.
+
+## Module 5 — local baseline and pre-release checks (2026-11-04)
+
+- Before changes: Node standalone tests 43/43 passed.
+- After security policy, data and redaction work: 54/54 standalone tests passed (see local `npm run test:server`).
+- `npm run projects:validate` passed for four profiles; Sample API now includes a loopback staging read-only environment.
+- CLI `--dry-run` passed for Sample API local and staging.
+- Full TS/lint/build/browsers and cross-browser results must be validated **against the Module 5 GitHub commit itself**. Do not use older run counts as proof for this release.

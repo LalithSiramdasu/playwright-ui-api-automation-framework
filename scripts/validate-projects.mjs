@@ -7,7 +7,7 @@ try {
     const status = project.enabled ? 'configured' : 'template disabled';
     console.log(`- ${project.id} | ${project.type} | ${status} | ${Object.keys(project.environments).join(', ')}`);
   }
-  console.log('Profiles validated. Module 2 executes enabled local targets via npm run project:run.');
+  console.log('Profiles validated. Module 5 permits approved read-only staging targets with explicit CLI consent.');
 } catch (error) {
   console.error(`Project profile validation failed: ${error.message}`);
   process.exitCode = 1;

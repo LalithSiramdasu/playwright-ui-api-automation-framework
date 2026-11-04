@@ -4,6 +4,8 @@ export interface ProjectRunSelection {
   projectType: 'web' | 'api' | 'hybrid';
   environment: string;
   readOnly: boolean;
+  remote: boolean;
+  restricted: boolean;
   suite: string;
   browser: string;
   webBaseUrl: string | null;

@@ -9,6 +9,7 @@ import {
 function parseArgs(argv) {
   const selection = {};
   let dryRun = false;
+  let allowRemote = false;
   const flags = new Map([
     ['--project', 'projectId'], ['--environment', 'environment'],
     ['--suite', 'suite'], ['--browser', 'browser'],
@@ -16,18 +17,19 @@ function parseArgs(argv) {
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--dry-run') { dryRun = true; continue; }
+    if (arg === '--allow-remote') { allowRemote = true; continue; }
     const key = flags.get(arg);
     if (!key || selection[key] !== undefined || !argv[i + 1] || argv[i + 1].startsWith('--')) {
-      throw new Error(`Invalid argument '${arg}'. Use --project, --environment, --suite, --browser and optional --dry-run`);
+      throw new Error(`Invalid argument '${arg}'. Use --project, --environment, --suite, --browser and optional --dry-run and --allow-remote`);
     }
     selection[key] = argv[++i];
   }
-  return { selection, dryRun };
+  return { selection, dryRun, allowRemote };
 }
 
 try {
-  const { selection: input, dryRun } = parseArgs(process.argv.slice(2));
-  const selection = resolveProjectRun(input);
+  const { selection: input, dryRun, allowRemote } = parseArgs(process.argv.slice(2));
+  const selection = resolveProjectRun(input, { remoteOptIn: allowRemote });
   const cli = join(REPOSITORY_ROOT, 'node_modules', 'playwright', 'cli.js');
   const outputDir = join(REPOSITORY_ROOT, 'test-results', selection.projectId, selection.environment);
   const args = [cli, ...makePlaywrightArguments(selection), '--output', outputDir];

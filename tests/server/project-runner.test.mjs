@@ -68,7 +68,7 @@ test('Module 2: read-only remote environments are fail-closed', () => {
     environments: { staging: { apiBaseUrl: 'https://api.example.test/', readOnly: true } },
     suites: ['api'], credentialEnv: {},
   });
-  assert.throws(() => resolveProjectRun({ projectId: 'pilot-api', environment: 'staging', suite: 'api' }, { registry: [...registry, remote] }), /read-only/);
+  assert.throws(() => resolveProjectRun({ projectId: 'pilot-api', environment: 'staging', suite: 'api' }, { registry: [...registry, remote] }), /not enabled/);
 });
 
 test('Module 2: writable remote environments are blocked pending safety controls', () => {
@@ -78,7 +78,7 @@ test('Module 2: writable remote environments are blocked pending safety controls
     environments: { staging: { apiBaseUrl: 'https://api.example.test/', readOnly: false } },
     suites: ['api'], credentialEnv: {},
   });
-  assert.throws(() => resolveProjectRun({ projectId: 'pilot-api', environment: 'staging', suite: 'api' }, { registry: [remote] }), /only explicitly configured local fixtures/);
+  assert.throws(() => resolveProjectRun({ projectId: 'pilot-api', environment: 'staging', suite: 'api' }, { registry: [remote] }), /must be read-only/);
 });
 
 test('Module 2: refuses symlinked test directories outside checkout', (context) => {

@@ -12,7 +12,7 @@ const projectIdPattern = /^[a-z][a-z0-9-]{2,39}$/;
 const environmentNamePattern = /^(local|development|test|staging|production)$/;
 const envVarPattern = /^[A-Z][A-Z0-9_]{1,63}$/;
 const localHosts = new Set(['127.0.0.1', 'localhost', '[::1]']);
-const profileKeys = ['schemaVersion', 'id', 'name', 'type', 'enabled', 'environments', 'allowedHosts', 'suites', 'credentialEnv'];
+const profileKeys = ['schemaVersion', 'id', 'name', 'type', 'enabled', 'environments', 'allowedHosts', 'suites', 'credentialEnv', 'remoteExecution'];
 const environmentKeys = ['webBaseUrl', 'apiBaseUrl', 'readOnly'];
 const credentialKeys = ['username', 'password', 'token', 'apiKey'];
 
@@ -108,6 +108,11 @@ export function validateProjectProfile(raw, context = 'project profile') {
       }
     }
   }
+  if (hasOwn(raw, 'remoteExecution')) {
+    if (!isPlainObject(raw.remoteExecution)) fail(context, 'remoteExecution must be an object');
+    exactKeys(raw.remoteExecution, ['enabled'], `${context}.remoteExecution`);
+    if (typeof raw.remoteExecution.enabled !== 'boolean') fail(context, 'remoteExecution.enabled must be a boolean');
+  }
   return Object.freeze({
     schemaVersion: 1,
     id: raw.id,
@@ -118,6 +123,7 @@ export function validateProjectProfile(raw, context = 'project profile') {
     allowedHosts: Object.freeze([...raw.allowedHosts]),
     suites: Object.freeze([...raw.suites]),
     credentialEnv: Object.freeze({ ...(raw.credentialEnv ?? {}) }),
+    remoteExecution: Object.freeze({ enabled: raw.remoteExecution?.enabled === true }),
   });
 }
 

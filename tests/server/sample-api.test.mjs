@@ -87,3 +87,19 @@ test('Module 4: query validation, malformed JSON and unsupported method return d
   const method = await fetch(`${baseURL}/api/inventory`, { method: 'POST' });
   assert.equal(method.status, 405);
 });
+
+test('Module 5: test entities are independent and deletable without affecting inventory', async () => {
+  const label = `qa-local-${Date.now().toString(36)}`;
+  const created = await fetch(`${baseURL}/api/test-entities`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ label }),
+  });
+  assert.equal(created.status, 201);
+  const body = await created.json();
+  assert.equal(body.label, label);
+  const found = await fetch(`${baseURL}/api/test-entities/${body.id}`);
+  assert.equal(found.status, 200);
+  assert.deepEqual(await found.json(), body);
+  assert.equal((await fetch(`${baseURL}/api/test-entities/${body.id}`, { method: 'DELETE' })).status, 200);
+  assert.equal((await fetch(`${baseURL}/api/test-entities/${body.id}`)).status, 404);
+  assert.equal((await fetch(`${baseURL}/api/inventory`)).status, 200);
+});

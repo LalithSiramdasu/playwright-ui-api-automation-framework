@@ -49,6 +49,10 @@ jobs:
         run: npm run test:sample-web
         env:
           CI: 'true'
+      - name: Run restricted staging API checks (Module 5)
+        run: npm run test:sample-api-staging
+        env:
+          CI: 'true'
       - name: Upload reports on success or failure
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

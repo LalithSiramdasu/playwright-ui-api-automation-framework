@@ -7,6 +7,7 @@ import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node
 import { fileURLToPath } from 'node:url';
 import { SUITES, summarizeReport } from './reporting.mjs';
 import { loadProjectRegistry } from '../src/core/project-registry.mjs';
+import { configuredSecretValues, redactSensitiveText } from '../src/core/redaction.mjs';
 import { resolveProjectRun, makePlaywrightArguments, selectionEnvironment, RunConfigurationError } from '../src/core/project-runner.mjs';
 
 const dashboardDir = dirname(fileURLToPath(import.meta.url));
@@ -21,12 +22,16 @@ const MAX_RUNS = 100;
 const MAX_LOG_LINES = 350;
 mkdirSync(artifactDir, { recursive: true });
 
+const secretValues = configuredSecretValues();
+const redact = (value) => redactSensitiveText(value, secretValues);
 let runs = [];
 try {
   const parsed = JSON.parse(readFileSync(historyFile, 'utf8'));
   if (Array.isArray(parsed)) runs = parsed.slice(0, MAX_RUNS);
 } catch { /* Fresh installation, no saved runs. */ }
 for (const run of runs) {
+  run.logs = (run.logs ?? []).map(redact);
+  run.cases = (run.cases ?? []).map((item) => ({ ...item, error: redact(item.error ?? '') }));
   if (run.status === 'running') {
     run.status = 'interrupted';
     run.finishedAt = new Date().toISOString();
@@ -45,7 +50,7 @@ function send(res, code, value) {
 function appendLog(run, chunk) {
   const ansi = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
   const lines = String(chunk).replace(ansi, '').split(/\r?\n/).filter(Boolean);
-  run.logs.push(...lines);
+  run.logs.push(...lines.map(redact));
   if (run.logs.length > MAX_LOG_LINES) run.logs.splice(0, run.logs.length - MAX_LOG_LINES);
 }
 function safePath(base, requestPath) {
@@ -118,7 +123,7 @@ function startRun(selection) {
     if (error) appendLog(run, error);
     try {
       const summary = summarizeReport(JSON.parse(readFileSync(join(folder, 'results.json'), 'utf8')));
-      run.cases = summary.cases;
+      run.cases = summary.cases.map((item) => ({ ...item, error: redact(item.error) }));
       run.counts = summary.counts;
     } catch { appendLog(run, 'JSON result unavailable. See log above for the execution error.'); }
     run.reportAvailable = existsSync(join(htmlDir, 'index.html'));

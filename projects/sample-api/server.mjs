@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 const port = Number(process.env.SAMPLE_API_PORT ?? 4174);
 const inventory = Object.freeze([{ sku: 'S-001', title: 'Sample Kit', available: true }]);
 const tokens = new Set();
+const testEntities = new Map();
 // Public, deliberately fake credential defaults are for this localhost fixture only.
 const demoUser = 'api-tester@example.test';
 const demoPassword = 'LocalOnly123!';
@@ -36,6 +37,24 @@ const server = createServer(async (req, res) => {
       const accessToken = randomUUID();
       tokens.add(accessToken);
       return send(res, 200, { accessToken, tokenType: 'Bearer', expiresIn: 3600 });
+    }
+    // Dedicated localhost-only test-data lifecycle, never used by restricted staging suites.
+    if (path === '/api/test-entities' && req.method === 'POST') {
+      const body = await readBody(req);
+      if (typeof body?.label !== 'string' || !/^qa-[a-z0-9-]{4,90}$/.test(body.label)) {
+        return send(res, 400, { error: 'Invalid test entity label' });
+      }
+      const id = randomUUID();
+      const entity = { id, label: body.label };
+      testEntities.set(id, entity);
+      return send(res, 201, entity);
+    }
+    const entityId = path.startsWith('/api/test-entities/') ? path.slice('/api/test-entities/'.length) : null;
+    if (entityId && /^[0-9a-f-]{36}$/.test(entityId)) {
+      if (!testEntities.has(entityId)) return send(res, 404, { error: 'Unknown test entity' });
+      if (req.method === 'GET') return send(res, 200, testEntities.get(entityId));
+      if (req.method === 'DELETE') { testEntities.delete(entityId); return send(res, 200, { removed: true }); }
+      return send(res, 405, { error: 'Method not allowed' });
     }
     if (req.method !== 'GET') return send(res, 405, { error: 'Method not allowed' });
     if (path === '/health') return send(res, 200, { status: 'ok', service: 'sample-api' });
