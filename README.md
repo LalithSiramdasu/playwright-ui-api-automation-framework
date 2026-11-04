@@ -157,6 +157,12 @@ The project discovery API returns only safe display metadata, never credentials 
 
 See **[the dashboard guide](docs/DASHBOARD.md)** for scope and limitations. The next planned phase is **Module 7: deeper reporting and analytics**.
 
+## Module 8 — project-aware CI/CD automation
+
+Alongside the full [push/PR verification workflow](.github/workflows/playwright.yml), GitHub Actions offers a separate [Project-aware QA Runs](.github/workflows/project-tests.yml) workflow. Select a registered project, local or approved simulated staging environment, supported suite and browser through **Actions → Project-aware QA Runs → Run workflow**. Invalid selections are rejected before tests run. Every execution uploads a namespaced Playwright report and a small `ci-selection.json` audit record. A weekly schedule exercises only the local Sample API read-only staging fixture; it does not monitor or contact any public endpoint.
+
+Run `node scripts/ci-project.mjs --preflight` locally with the documented `QA_CI_*` variables to validate a selection. **Live remote targets are not dispatchable through this workflow**; the separate local CLI approved-staging policy does not grant blanket permission for CI to contact real services. See [Module 8 CI guide](docs/CI_AUTOMATION.md).
+
 ## Useful test commands
 
 | Command | Purpose |

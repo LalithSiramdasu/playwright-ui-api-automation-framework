@@ -86,3 +86,11 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - `node --check dashboard/server.mjs` and `node --check dashboard/analytics.mjs`: Passed.
 - Added dedicated Chromium dashboard tests for exports, comparisons and deletion UI; new run's GitHub Actions must pass before these are marked verified.
 - React Vite build, lint, typecheck and complete cross-browser regression are release gates verified only by the *new* commit's GitHub Actions. Older green runs do not prove Module 7.
+
+## Module 8 — project-aware CI/CD (pre-push local evidence; 2026-11-04)
+
+- Verified starting point: commit `21bf5a1` has [successful CI run 41852089997](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41852089997).
+- `node --test tests/server/*.test.mjs`: **76 passed, 0 failed** (including nine new CI selection, authorization and metadata tests).
+- `node scripts/validate-projects.mjs`: 4 registered profiles validated.
+- `node --check scripts/ci-project.mjs`: passed.
+- The new manual/weekly workflow was authored but **not executed by that prior push workflow**. Test it separately with **Actions → Project-aware QA Runs**. The Module 8 push's build/lint/typecheck/regressions require its own GitHub Actions run.

@@ -153,3 +153,30 @@ npm run test:dashboard
 
 # CSV/JSON export, comparison and history deletion are available in Reports.
 # WARNING: Deleted dashboard/data/ history and reports are not restored by git clone.
+
+
+============================================================
+MODULE 8 - PROJECT-AWARE CI/CD CHECKS
+============================================================
+
+# Run these one at a time. This command is a local preflight; no tests start:
+set GITHUB_EVENT_NAME=workflow_dispatch
+set QA_CI_PROJECT=sample-api
+set QA_CI_ENVIRONMENT=local
+set QA_CI_SUITE=api
+set QA_CI_BROWSER=all
+node scripts/ci-project.mjs --preflight
+
+# Run the selected local project suite through the same safe dispatch path:
+node scripts/ci-project.mjs --execute
+
+# Clear selection overrides in this CMD window afterward:
+set QA_CI_PROJECT=
+set QA_CI_ENVIRONMENT=
+set QA_CI_SUITE=
+set QA_CI_BROWSER=
+set GITHUB_EVENT_NAME=
+
+# Or use GitHub website: Actions > Project-aware QA Runs > Run workflow.
+# Weekly runs test ONLY the local Sample API read-only staging simulation.
+# This workflow intentionally does not contact external/production targets.

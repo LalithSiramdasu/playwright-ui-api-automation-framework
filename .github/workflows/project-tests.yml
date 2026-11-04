@@ -1,0 +1,99 @@
+name: Project-aware QA Runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: Registered project to test
+        type: choice
+        required: true
+        default: sample-api
+        options:
+          - northline-goods
+          - sample-web
+          - sample-api
+      environment:
+        description: Target environment (only approved local fixtures; staging is a local read-only simulation)
+        type: choice
+        required: true
+        default: local
+        options:
+          - local
+          - staging
+      suite:
+        description: Run only a supported suite for the chosen project
+        type: choice
+        required: true
+        default: smoke
+        options:
+          - smoke
+          - regression
+          - ui
+          - api
+          - negative
+          - accessibility
+          - all
+      browser:
+        description: API-only suites require all (no browser)
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - chromium
+          - firefox
+          - webkit
+  # Only the Sample API's local, read-only staging fixture is scheduled.
+  # No external target or production system is contacted.
+  schedule:
+    - cron: '17 3 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: project-qa-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: false
+
+jobs:
+  project-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CI: 'true'
+      QA_CI_PROJECT: ${{ github.event_name == 'schedule' && 'sample-api' || inputs.project }}
+      QA_CI_ENVIRONMENT: ${{ github.event_name == 'schedule' && 'staging' || inputs.environment }}
+      QA_CI_SUITE: ${{ github.event_name == 'schedule' && 'api' || inputs.suite }}
+      QA_CI_BROWSER: ${{ github.event_name == 'schedule' && 'all' || inputs.browser }}
+      QA_REMOTE_APPROVAL: ''
+    steps:
+      - name: Checkout trusted project definitions
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Validate requested project and execution policy (no network)
+        run: node scripts/ci-project.mjs --preflight
+      - name: Install locked root dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install browsers for selected UI suite
+        if: ${{ env.QA_CI_PROJECT != 'sample-api' && env.QA_CI_SUITE != 'api' }}
+        run: npx playwright install --with-deps
+      - name: Run selected project suite
+        run: node scripts/ci-project.mjs --execute
+      - name: Upload project test evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-qa-${{ github.run_id }}
+          path: |
+            reports/ci-selection.json
+            playwright-report/
+            test-results/
+            reports/
+          retention-days: 14
+          if-no-files-found: warn

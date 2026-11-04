@@ -74,3 +74,10 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Delete actions must require explicit confirmation, reject during active runs, and remove only report artifacts for valid known run UUIDs.
 - Preserve deterministic server-side tests with an isolated `DASHBOARD_DATA_DIR`; do not delete a user's actual history during CI.
 - The dashboard remains single-user localhost-only; it is not a public hosted service.
+
+## Module 8 project-aware CI/CD
+
+- The push/PR release workflow stays comprehensive; the manual/weekly project workflow is a separate scoped entrypoint.
+- Never let a CI input become a shell command, arbitrary script, custom path or remote-approval token.
+- Remote/production targets are not executed by GitHub Actions. The weekly schedule uses the local Sample API staging fixture only.
+- Any CI feature changes require node preflight tests, GitHub Actions verification on the new commit, and explicit run evidence; a passing push workflow does not prove the manual-dispatch workflow was exercised.

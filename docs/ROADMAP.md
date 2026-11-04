@@ -50,6 +50,16 @@
 - Node integration tests use an isolated temporary history directory, and dashboard browser tests exercise the controls without deleting real user data.
 - **Next:** Module 8 adds project-aware GitHub Actions, reviewed test triggers and artifact-management policies.
 
+## Module 8 milestone — project-aware CI/CD (implemented; verify on current commit)
+
+- Preserves the original push/PR release workflow with full regressions and lockfile installs (`npm ci` for root and dashboard).
+- Adds **Project-aware QA Runs** (`.github/workflows/project-tests.yml`): manually select a registered project, environment, suite and browser; invalid combinations fail before dependency installation.
+- Adds an explicit **weekly Monday 03:17 UTC** safe check running only the local Sample API staging simulator (no public hosts or production).
+- CI dispatch deliberately rejects remote targets and never takes arbitrary scripts, shell arguments or test paths. Separately approved remote staging needs a future review before GitHub-hosted runner execution.
+- Adds structured `reports/ci-selection.json` evidence, per-run artifact uploads with 14-day retention and independent test-module coverage.
+- CLI preflight and selection unit tests are part of the existing `npm run test:server` CI gate. **Actual manual-dispatch workflow** requires a separately initiated run and must not be reported as passed solely from the main push workflow.
+- **Next:** Module 9 onboards an authorized separate application and verifies project-specific UI/API behavior rather than generic uptime alone.
+
 ## P1 — Reliability and coverage (next)
 
 | Work | Definition of done |
