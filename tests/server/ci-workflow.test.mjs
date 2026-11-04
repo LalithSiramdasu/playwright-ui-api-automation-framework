@@ -9,7 +9,7 @@ test('Module 8: scoped workflow allows only manual and weekly triggers', () => {
   assert.match(manual, /workflow_dispatch:/);
   assert.match(manual, /schedule:/);
   assert.match(manual, /cron: '17 3 \* \* 1'/);
-  assert.doesNotMatch(manual, /\n  push:/);
+  assert.doesNotMatch(manual, /\n {2}push:/);
 });
 
 test('Module 8: workflows never inject selected command input into a shell', () => {
