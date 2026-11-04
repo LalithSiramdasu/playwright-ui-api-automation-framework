@@ -13,7 +13,7 @@ npm run dashboard:setup
 npm run dashboard
 ```
 
-Open **http://127.0.0.1:4300**. Select a suite and a browser project, then choose **Run selected suite**. Keep the terminal open. When the process finishes, open **Test runs** for test-level results and **Reports** for the HTML report.
+Open **http://127.0.0.1:4300**. Select an **active project** (Northline Goods, Sample Website, or Sample API), an **environment**, a supported **suite**, and where applicable a browser. Then choose **Run selected suite**. Keep the terminal open. When the process finishes, open **Test runs** for test-level results and **Reports** for the HTML report.
 
 The dashboard starts Playwright itself. You do **not** have to start the demo application separately. Playwright's `webServer` configuration manages it.
 
@@ -23,14 +23,14 @@ For frontend development, start the backend with `npm run dashboard:start` in on
 
 ```text
 React dashboard (dashboard/src/)
-    | GET /api/health, GET /api/runs, GET /api/runs/:id
+    | GET /api/projects, GET /api/health, GET /api/runs, GET /api/runs/:id
     | POST /api/runs, POST /api/runs/:id/cancel
     v
 Node local API (dashboard/server.mjs)
-    | allowlisted suite/browser --> Playwright CLI (spawn, no shell)
+    | profile + environment + allowlisted suite/browser --> Playwright CLI (spawn, no shell)
     | reporter --> JSON + HTML artifacts per run
     v
-Existing UI / API automation suite, Page Objects, fixtures, demo shop
+Northline, Sample Website and Sample API project-specific test suites
 ```
 
 The backend persists up to 100 recent runs in `dashboard/data/runs.json`, and keeps their reports in `dashboard/data/artifacts/<run-id>/`. These locations are in `.gitignore`. Logs are capped at 350 lines per run; results include test names, per-project status, durations and failures. Running tests is not a simulation.
@@ -44,7 +44,25 @@ The backend persists up to 100 recent runs in `dashboard/data/runs.json`, and ke
 - **Case details**: final status, total attempt duration and final error message.
 - **Reports**: HTML assets generated for each real run, shown only when the report exists.
 
-Selections: **Full validation, Smoke, Regression, UI, API, Negative, Accessibility**. Browser project selection filters to Chromium, Firefox or WebKit; a single-browser selection omits API-only tests. Choose **All applicable projects** to include cross-browser and API tests where applicable.
+Selections: **Full validation, Smoke, Regression, UI, API, Negative, Accessibility**, limited to suites supported by the selected registered project. Browser selection filters to Chromium, Firefox, or WebKit when applicable; API-only projects cannot select a browser. Choose **All applicable browsers** to run compatible browser projects and API checks. Disabled profiles appear as unavailable, rather than being launchable.
+
+### Module 6 — project and environment scope
+
+The selector row appears on every dashboard page. Changing project or environment resets the selected run detail and filters **Overview KPIs, execution trend, recent executions, run history, suite counts, and HTML report links** to that target. The underlying runner continues to enforce strict project, browser and environment preflight; changing the UI cannot override target authorization. Global execution remains one run at a time, even when another project is selected.
+
+Historical runs without explicit project/environment metadata are attributed to **Northline Goods / local** for backward compatibility; this is a legacy classification, not a claim that newer projects ran historically. New runs record both identifiers.
+
+The **Sample API / staging** choice uses the local read-only staging simulation. External approved HTTPS staging requires server-side review and approval, and the dashboard does not grant permission to run unapproved remote targets. Production remains blocked. No URLs or credential variable names are exposed by the project discovery response.
+
+Run browser-level UI tests against the dashboard itself after building the frontend:
+
+```bash
+npm run dashboard:build
+npm run test:dashboard
+```
+
+These additional UI tests check the project/environment dropdowns, supported suite choices, request payload, and isolated analytics using controlled fixtures. They do not fabricate dashboard production results; they use Playwright request interception only inside the test process. Existing test suite results are still real.
+
 
 ## Safety and reliability
 
@@ -70,4 +88,4 @@ This local tool is designed for developer workstations, not exposure on public n
 
 ## Validation
 
-`npm run test:server` includes dashboard API input validation and JSON result parser tests, alongside the existing demo API integration tests. GitHub Actions additionally installs and builds the React dashboard, runs typecheck/lint, installs browsers and executes the complete Playwright suite.
+`npm run test:server` includes dashboard API input validation, project-scoping helpers, and JSON result parser tests, alongside the existing demo API integration tests. GitHub Actions additionally installs and builds the React dashboard, runs typecheck/lint, installs browsers and executes the complete Playwright suite.

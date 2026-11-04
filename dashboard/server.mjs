@@ -150,6 +150,12 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && pathname === '/api/projects') {
       const projects = loadProjectRegistry().map(({ id, name, type, enabled, environments, suites }) => ({
         id, name, type, enabled, environments: Object.keys(environments), suites,
+        environmentDetails: Object.entries(environments).map(([environmentId, target]) => ({
+          id: environmentId,
+          readOnly: target.readOnly,
+          remote: [target.webBaseUrl, target.apiBaseUrl].filter(Boolean).some((value) =>
+            !['127.0.0.1', 'localhost', '[::1]'].includes(new URL(value).hostname)),
+        })),
       }));
       return send(res, 200, { projects, executionMode: 'project-aware' });
     }

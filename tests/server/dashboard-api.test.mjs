@@ -71,9 +71,13 @@ test('dashboard lists validated project profiles without exposing URLs or secret
   assert.equal(response.body.executionMode, 'project-aware');
   assert.deepEqual(response.body.projects.map((project) => project.id), ['northline-goods', 'sample-api', 'sample-web', 'starter-api']);
   assert.equal(response.body.projects[1].enabled, true);
-  assert.equal(response.body.projects[2].enabled, true);
-  assert.equal(response.body.projects[2].type, 'web');
   assert.equal(response.body.projects[3].enabled, false);
+  assert.deepEqual(response.body.projects[1].environments, ['local', 'staging']);
+  assert.deepEqual(response.body.projects[1].environmentDetails.map(({ id, readOnly, remote }) => ({ id, readOnly, remote })), [
+    { id: 'local', readOnly: false, remote: false },
+    { id: 'staging', readOnly: true, remote: false },
+  ]);
+  assert.equal(JSON.stringify(response.body).includes('4174'), false);
   assert.equal(JSON.stringify(response.body).includes('STARTER_API_TOKEN'), false);
   assert.equal(JSON.stringify(response.body).includes('api.example.test'), false);
 });

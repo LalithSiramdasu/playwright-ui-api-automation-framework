@@ -149,6 +149,14 @@ The runner now has a shared fail-closed execution policy and a **read-only stagi
 npm run test:sample-api-staging  # local staging simulation, safe tests only
 ```
 
+## Module 6 — Multi-project QA Control Center
+
+The React console now exposes **Project** and **Environment** selectors. Choose Northline Goods, Sample Website, or Sample API; unsupported suites and browser choices are filtered for the selected project. The Overview, historical runs, report links, and suite counts are scoped to **project and environment**. Legacy runs without project metadata appear under Northline/local. There is still one active local run at a time.
+
+The project discovery API returns only safe display metadata, never credentials or target URLs. The API runner keeps its server-side safety checks: external HTTPS staging requires separate authorization, and production remains blocked. To test the dashboard UI itself, run `npm run dashboard:build` followed by `npm run test:dashboard`.
+
+See **[the dashboard guide](docs/DASHBOARD.md)** for scope and limitations. The next planned phase is **Module 7: deeper reporting and analytics**.
+
 ## Useful test commands
 
 | Command | Purpose |

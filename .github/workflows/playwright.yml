@@ -53,6 +53,10 @@ jobs:
         run: npm run test:sample-api-staging
         env:
           CI: 'true'
+      - name: Check Module 6 dashboard UI project selection (Chromium)
+        run: npm run test:dashboard
+        env:
+          CI: 'true'
       - name: Upload reports on success or failure
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4

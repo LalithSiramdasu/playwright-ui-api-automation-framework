@@ -28,6 +28,7 @@
     "dashboard:start": "node dashboard/server.mjs",
     "dashboard": "npm run dashboard:build && npm run dashboard:start",
     "dashboard:dev": "npm --prefix dashboard run dev",
+    "test:dashboard": "playwright test --config dashboard/playwright-dashboard.config.ts",
     "projects:validate": "node scripts/validate-projects.mjs",
     "project:run": "node scripts/run-project.mjs",
     "test:sample-api": "node scripts/run-project.mjs --project sample-api --environment local --suite all",

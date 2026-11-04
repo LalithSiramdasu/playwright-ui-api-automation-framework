@@ -3,19 +3,14 @@ import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import { assessTargetPolicy } from './src/core/execution-policy.cjs';
 
-/**
- * The Playwright TypeScript config loader sometimes runs under CommonJS.
- * Read validated data-only JSON here rather than importing the Node ESM
- * preflight module (which uses import.meta for safe path resolution).
- * Dashboard and CLI already call resolveProjectRun before launching Playwright.
- */
+/** The Playwright TS loader may run as CommonJS; profile data is read here, while CLI/dashboard use shared preflight. */
 function projectFromEnvironment() {
   const id = process.env.QA_PROJECT_ID;
   if (!id) return null;
   if (!/^[a-z][a-z0-9-]{2,39}$/.test(id)) throw Error('Invalid QA_PROJECT_ID');
   const profileFile = join(process.cwd(), 'projects', id, 'project.config.json');
   const profile = JSON.parse(readFileSync(profileFile, 'utf8'));
-  if (profile.id !== id || profile.enabled !== true || !['web', 'api', 'hybrid'].includes(profile.type)) {
+  if (profile.id !== id || profile.enabled !== true || !['web','api','hybrid'].includes(profile.type)) {
     throw Error(`Invalid or disabled project '${id}'`);
   }
   const environments = Object.keys(profile.environments ?? {});
@@ -24,13 +19,11 @@ function projectFromEnvironment() {
     throw Error(`Unsupported environment for project '${id}'`);
   }
   const target = profile.environments[environment];
-  const policy = assessTargetPolicy(profile, environment, {
-    remoteOptIn: process.env.QA_ALLOW_REMOTE === '1',
-  });
+  const policy = assessTargetPolicy(profile, environment, { remoteOptIn: process.env.QA_ALLOW_REMOTE === '1' });
   const suite = process.env.QA_SUITE ?? 'all';
   const browser = process.env.QA_BROWSER ?? 'all';
   if (suite !== 'all' && !profile.suites?.includes(suite)) throw Error('Unsupported suite for this project');
-  if (!['all', 'chromium', 'firefox', 'webkit'].includes(browser)) throw Error('Unsupported browser');
+  if (!['all','chromium','firefox','webkit'].includes(browser)) throw Error('Unsupported browser');
   if ((profile.type === 'api' || suite === 'api') && browser !== 'all') throw Error('API suites cannot select a browser');
   return {
     projectId: id,
@@ -79,7 +72,7 @@ export default defineConfig({
   ],
   outputDir: reportPrefix ? `test-results/${reportPrefix}` : 'test-results',
   use: {
-    // Remote staging may contain credentials; avoid recording browser artifacts there.
+    // Remote staging may carry credentials in network traces or screenshots.
     trace: selection?.remote ? 'off' : 'on-first-retry',
     screenshot: selection?.remote ? 'off' : 'only-on-failure',
     video: selection?.remote ? 'off' : 'retain-on-failure',

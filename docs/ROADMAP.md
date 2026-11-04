@@ -17,7 +17,7 @@
 - Validated project/environment/suite/browser preflight with fail-closed remote/read-only behavior.
 - Separate Playwright test discovery paths; no arbitrary commands or test-directory values from the dashboard.
 - CLI runner and dashboard POST endpoint now honor explicit project selections. Existing dashboard buttons default to Northline Goods.
-- **Next:** Modules 3–5 add reusable external website/API test adapters, secret handling and authorized remote-target policy. Module 6 provides graphical project selection and per-project analytics.
+- Modules 3–5 have added reusable website/API adapters, credential rules and safe staging execution. Module 6 provides graphical project selection and scoped analytics.
 
 ## Module 4 implementation milestone — reusable REST API automation
 
@@ -32,7 +32,15 @@
 - Restricted runs discover only dedicated `tests/safe/` cases; the local Sample API exposes a read-only staging simulation. This does not sandbox arbitrary test code.
 - Reusable GET-only API client; unique data namespaces with automated teardown, demonstrated against an isolated local entity API.
 - Dashboard log/test-error redaction and `.env.*` exclusions. Raw artifacts still need careful handling.
-- **Next:** Module 6 dashboard project selector and honest environment/suite availability, preserving the fail-closed remote approval requirement. See [Module 5 safe-execution guide](SECURE_EXECUTION.md).
+- **Completed next:** Module 6 dashboard project selector and environment/suite availability, preserving fail-closed remote approval. See [Module 5 safe-execution guide](SECURE_EXECUTION.md).
+
+## Module 6 milestone — multi-project dashboard controls
+
+- React dashboard project/environment dropdowns now use validated discovery metadata; disabled project templates cannot be selected.
+- Suite and browser options follow the active project profile, and execution requests include the explicit project ID and environment.
+- Overview KPIs, trends, recent executions, run history, test-suite counts, and report listings are filtered by project/environment, with Northline/local classification for legacy entries.
+- A dedicated Chromium UI test suite checks selection, API payload and scoped analytics; server-side project safety preflight is unchanged.
+- **Next:** Module 7 will improve backend data retention, filtered API responses, exports, historical comparisons and report reliability.
 
 ## P1 — Reliability and coverage (next)
 

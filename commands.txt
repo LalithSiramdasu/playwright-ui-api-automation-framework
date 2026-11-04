@@ -116,3 +116,22 @@ npm run test:sample-api-staging
 # set QA_REMOTE_APPROVAL=
 
 # Never run destructive tests on production or commit credentials.
+
+============================================================
+MODULE 6 — MULTI-PROJECT QA CONTROL CENTER
+============================================================
+
+# From the repository root, run one command per line in Windows CMD:
+git status
+git pull origin main
+npm run projects:validate
+npm run test:server
+npm run dashboard:build
+npm run test:dashboard
+npm run dashboard
+
+# In QA Control Center at http://127.0.0.1:4300:
+# Select Northline Goods / Sample Website / Sample API.
+# Choose environment, test suite, and applicable browser, then run.
+# Historical counts and reports follow the active project and environment.
+# Sample API staging uses the local read-only simulation; external targets require approval.

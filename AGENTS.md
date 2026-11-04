@@ -42,7 +42,7 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Profiles are **data**, never command definitions or arbitrary file paths. The hardcoded local sample server mappings live in `playwright.config.ts`.
 - Module 2 blocks all remote and read-only targets until Module 5 adds reviewed safe-run policy. Do not remove that safeguard merely to make an external test run.
 - Keep `node scripts/run-project.mjs` and the dashboard's `POST /api/runs` on the same shared `resolveProjectRun` preflight.
-- Module 6 adds a visual project switcher; do not claim the current dashboard UI has one.
+- Module 6 includes a visual project/environment switcher; maintain project-scoped KPIs and keep runner validation authoritative.
 
 ## Module 4 REST API testing contracts
 
@@ -59,3 +59,10 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Restricted suites live only under `projects/<id>/tests/safe/`; each test must be reviewed for non-mutating behavior. Playwright is not a security sandbox.
 - Use `ReadOnlyApiClient` on staging API checks, `TestDataScope` for local mutable test records and cleanup, and never include secrets in Git or raw report screenshots.
 - Dashboard log redaction is defense-in-depth. HTML/JUnit/JSON reports and browser traces might contain secrets; do not claim they are fully sanitized.
+
+## Module 6 dashboard project scope
+
+- `GET /api/projects` may return only safe display metadata, including environment read-only/remote flags; never expose URLs or credential variable names.
+- All visible run counts, report listings and trend charts must follow the active project and environment. Legacy run records are Northline/local.
+- Do not enable unsupported suites or browsers. Do not allow UI controls to opt in to remote execution or bypass server-side approval.
+- Keep dashboard e2e checks in `dashboard/e2e/`, outside product UI tests, and verify them separately in CI.

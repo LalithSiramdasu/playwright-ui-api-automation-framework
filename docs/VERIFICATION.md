@@ -70,3 +70,11 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - `npm run projects:validate` passed for four profiles; Sample API now includes a loopback staging read-only environment.
 - CLI `--dry-run` passed for Sample API local and staging.
 - Full TS/lint/build/browsers and cross-browser results must be validated **against the Module 5 GitHub commit itself**. Do not use older run counts as proof for this release.
+
+## Module 6 local verification (2026-11-04; before release CI)
+
+- `npm run projects:validate`: passed (4 profiles).
+- `npm run test:server`: **57 tests passed**, including new project-scope helpers and updated dashboard metadata checks.
+- `node --check` / TypeScript parser check of edited React JSX and new Playwright test sources: passed.
+- The React production build, dashboard Chromium E2E checks, TypeScript, ESLint and other Playwright suites require the latest commit's GitHub Actions confirmation. No local browser runner dependencies are installed in this editing environment.
+- The screenshot of `6967000` shows an older failed run; later Module 5 commit `966080f` has successful [run 41847006208](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41847006208).

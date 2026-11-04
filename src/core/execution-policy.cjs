@@ -1,4 +1,3 @@
-/* global URL, process */
 /**
  * Module 5. Portable CJS policy, shared by the Node runner and Playwright's
  * configuration loader (which may transform its TS config to CommonJS).
