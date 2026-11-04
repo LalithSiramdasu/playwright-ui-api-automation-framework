@@ -22,7 +22,12 @@
     "test:negative": "playwright test --grep @negative",
     "test:server": "node --test tests/server/*.test.mjs",
     "test:e2e": "playwright test tests/ui",
-    "test:accessibility": "playwright test --grep @accessibility"
+    "test:accessibility": "playwright test --grep @accessibility",
+    "dashboard:setup": "npm --prefix dashboard install --no-audit --no-fund",
+    "dashboard:build": "npm --prefix dashboard run build",
+    "dashboard:start": "node dashboard/server.mjs",
+    "dashboard": "npm run dashboard:build && npm run dashboard:start",
+    "dashboard:dev": "npm --prefix dashboard run dev"
   },
   "engines": {
     "node": ">=20"

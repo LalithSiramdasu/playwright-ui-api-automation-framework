@@ -7,3 +7,8 @@ blob-report/
 .DS_Store
 .idea/
 .vscode/
+
+# Local dashboard dependencies, build and private execution history
+dashboard/node_modules/
+dashboard/dist/
+dashboard/data/

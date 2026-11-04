@@ -23,6 +23,10 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Install dashboard dependencies
+        run: npm run dashboard:setup
+      - name: Build React dashboard
+        run: npm run dashboard:build
       - name: Typecheck
         run: npm run typecheck
       - name: Lint

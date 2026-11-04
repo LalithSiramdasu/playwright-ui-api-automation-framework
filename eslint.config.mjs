@@ -4,7 +4,7 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 import globals from 'globals';
 
 export default [
-  { ignores: ['node_modules/**', 'playwright-report/**', 'test-results/**', 'reports/**'] },
+  { ignores: ['node_modules/**', 'dashboard/node_modules/**', 'dashboard/dist/**', 'dashboard/data/**', 'playwright-report/**', 'test-results/**', 'reports/**'] },
   eslint.configs.recommended,
   {
     files: ['**/*.ts'],
@@ -23,6 +23,11 @@ export default [
   {
     files: ['**/*.mjs'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
+  {
+    files: ['dashboard/src/**/*.{js,jsx}'],
+    languageOptions: { globals: { ...globals.browser }, parserOptions: { ecmaFeatures: { jsx: true } } },
+    rules: { 'no-unused-vars': 'off' },
   },
   {
     files: ['demo-app/public/**/*.js'],

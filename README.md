@@ -88,6 +88,21 @@ npm run demo:start
 
 Then open http://127.0.0.1:4173 and sign in with `demo@example.com` / `Password123!` (fake credentials only for this demo).
 
+## QA Control Center — real execution dashboard
+
+The repository now includes a **React + Vite dashboard** backed by a local Node.js orchestration API. It displays actual Playwright run history, pass rates, suite execution, per-test failures, logs and HTML reports. No sample pass/fail counts are hard-coded. Reports and history are stored on your own computer, not uploaded by the dashboard.
+
+```bash
+npm install                  # root test-runner dependencies
+npx playwright install      # one-time browser setup
+npm run dashboard:setup     # install dashboard UI dependencies
+npm run dashboard           # build UI and start local API + web server
+```
+
+Open **http://127.0.0.1:4300**. The dashboard runs *only on localhost* and runs one allowlisted suite at a time. For development, run `npm run dashboard:start` and `npm run dashboard:dev` in two terminals, then open **http://127.0.0.1:5173**.
+
+See **[Dashboard guide](docs/DASHBOARD.md)** for setup, architecture, security, and result semantics.
+
 ## Useful test commands
 
 | Command | Purpose |
@@ -147,4 +162,3 @@ If an application form was submitted before this project existed, be honest abou
 ## License
 
 MIT — see [LICENSE](LICENSE).
-"# playwright-ui-api-automation-framework" 
