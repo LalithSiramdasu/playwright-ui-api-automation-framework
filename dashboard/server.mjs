@@ -1,12 +1,13 @@
 /** Local-only orchestration API for the QA dashboard. No arbitrary shell commands. */
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync, createReadStream, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, createReadStream, rmSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUITES, summarizeReport } from './reporting.mjs';
 import { historyForScope, summarizeHistory, compareRuns, exportJson, exportCsv } from './analytics.mjs';
+import { loadRunHistory, saveRunHistory } from './storage.mjs';
 import { loadProjectRegistry } from '../src/core/project-registry.mjs';
 import { configuredSecretValues, redactSensitiveText } from '../src/core/redaction.mjs';
 import { resolveProjectRun, makePlaywrightArguments, selectionEnvironment, RunConfigurationError } from '../src/core/project-runner.mjs';
@@ -26,11 +27,7 @@ mkdirSync(artifactDir, { recursive: true });
 
 const secretValues = configuredSecretValues();
 const redact = (value) => redactSensitiveText(value, secretValues);
-let runs = [];
-try {
-  const parsed = JSON.parse(readFileSync(historyFile, 'utf8'));
-  if (Array.isArray(parsed)) runs = parsed.slice(0, MAX_RUNS);
-} catch { /* Fresh installation, no saved runs. */ }
+let runs = loadRunHistory(historyFile, MAX_RUNS);
 for (const run of runs) {
   run.logs = (run.logs ?? []).map(redact);
   run.cases = (run.cases ?? []).map((item) => ({ ...item, error: redact(item.error ?? '') }));
@@ -40,7 +37,7 @@ for (const run of runs) {
     run.logs = [...(run.logs ?? []), 'Dashboard restarted before this run finished.'].slice(-MAX_LOG_LINES);
   }
 }
-const save = () => writeFileSync(historyFile, JSON.stringify(runs.slice(0, MAX_RUNS), null, 2));
+const save = () => saveRunHistory(historyFile, runs, MAX_RUNS);
 function removeArtifact(id) {
   if (!VALID_RUN_ID.test(id)) return; // never derive a filesystem path from an untrusted ID
   rmSync(join(artifactDir, id), { recursive: true, force: true });

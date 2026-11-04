@@ -74,6 +74,12 @@ To delete one run, confirm in the browser. To clear all history for the selected
 
 Details, API endpoints, security limitations and test commands are documented in [Reporting and Analytics](REPORTING_ANALYTICS.md).
 
+## Local history crash-safety (hardening)
+
+The dashboard now writes `dashboard/data/runs.json` via a same-directory temporary file and atomic rename rather than replacing it with an incomplete write. If the saved JSON is malformed or contains invalid run records, startup **stops with an explanatory error without overwriting the file**. This protects existing local test history from accidental loss; it does not automatically reconstruct damaged JSON. No project files or stored reports are removed by this safeguard.
+
+On Windows, **stop the dashboard**, back up `dashboard\\data\\runs.json` outside the repository, inspect/repair the JSON and then restart. Do not delete the history file merely to silence an error; deletion permanently loses recorded run summaries. Continue to keep the dashboard bound to localhost. This module covers individual-process crashes and invalid JSON, **not** simultaneous writes by multiple dashboard processes or a database-level durability guarantee.
+
 ## Safety and reliability
 
 - HTTP server listens on **127.0.0.1** only and checks the request host.

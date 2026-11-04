@@ -126,3 +126,10 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - These are **16 distinct cases**, with **26 passed case executions across four runs**. The user ran the tests from Windows CMD and cleared temporary remote host approvals. Evidence is the operator-provided console transcripts/screenshots, not archived raw GitHub CI artifacts.
 - The test case mappings and limitations are recorded in [External Pilot Execution Evidence](EXTERNAL_PILOT_EXECUTION_EVIDENCE.md). Both remote suites remain **excluded from normal CI**; there is no owner-authorized business-client validation claim.
 - The preceding Module 10 release `04c9ca7` completed GitHub Actions successfully in [run 41862170645](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41862170645). The current documentation commit's CI must be checked separately and must not be represented as having rerun external public hosts.
+
+## Dashboard history reliability hardening — local storage checks
+
+- Added validated startup loading that refuses malformed saved `runs.json` instead of overwriting it with an empty history.
+- Added same-directory atomic history replacement with cleanup after failed rename.
+- Five isolated storage logic tests passed locally under Node 22. The sixth test boots the actual dashboard server against a temporary malformed history file; full standalone and cross-browser regression checks must be verified against this commit's own GitHub Actions run.
+- The change affects only local dashboard history storage; no external services are contacted by these checks.
