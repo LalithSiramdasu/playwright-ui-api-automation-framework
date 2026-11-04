@@ -81,3 +81,11 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Never let a CI input become a shell command, arbitrary script, custom path or remote-approval token.
 - Remote/production targets are not executed by GitHub Actions. The weekly schedule uses the local Sample API staging fixture only.
 - Any CI feature changes require node preflight tests, GitHub Actions verification on the new commit, and explicit run evidence; a passing push workflow does not prove the manual-dispatch workflow was exercised.
+
+## Module 9 external practice pilot restrictions
+
+- The `pilot-jsonplaceholder` and `pilot-the-internet` profiles are **public QA training sandboxes**, not user-owned software. They require explicit CLI host approval; they must not be added to automatic CI/scheduling or dashboard execution.
+- Preserve the eight source-mapped acceptance cases per pilot and validate with `npm run pilots:validate`.
+- Keep restricted tests under their respective `tests/safe/` trees. GET/HEAD only, no login posts, no destructive actions, no customer data, no load tests. The browser pilot uses `useReadOnlyOrigin`; the API uses `ReadOnlyApiClient`.
+- `staging` is the framework's restricted policy environment label, not a statement that those services provide private staging deployments.
+- Real user-owned project validation is not complete until an approved target, business requirements, actual execution evidence and CI/operations review are recorded.

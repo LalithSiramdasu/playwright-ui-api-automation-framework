@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   runsForProject, enabledProjects, selectableSuites, chooseSuite,
-  effectiveBrowser, runProjectId, runEnvironment,
+  effectiveBrowser, runProjectId, runEnvironment, dashboardCanExecuteEnvironment,
 } from '../../dashboard/src/project-selection.mjs';
 
 const projects = [
@@ -38,4 +38,10 @@ test('Module 6: segregates history by both selected project and environment', ()
   assert.deepEqual(runsForProject(runs, 'northline-goods', 'local').map((r) => r.id), ['legacy', 'a']);
   assert.deepEqual(runsForProject(runs, 'sample-api', 'local').map((r) => r.id), ['b']);
   assert.deepEqual(runsForProject(runs, 'sample-api', 'staging').map((r) => r.id), ['c']);
+});
+
+test('Module 9: dashboard disables external pilot launch until approved CLI execution', () => {
+  assert.equal(dashboardCanExecuteEnvironment({ id: 'staging', remote: true }), false);
+  assert.equal(dashboardCanExecuteEnvironment({ id: 'staging', remote: false }), true);
+  assert.equal(dashboardCanExecuteEnvironment(null), false);
 });

@@ -65,3 +65,11 @@ test('overview and run history never mix results from independent projects', asy
   await page.getByRole('button', { name: 'Test runs' }).click();
   await expect(page.getByText('1 executions for Independent Sample API / staging')).toBeVisible();
 });
+
+test('external practice pilot is visible but launch is blocked without CLI approval', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#project-select').selectOption('pilot-jsonplaceholder');
+  await expect(page.locator('#environment-select')).toHaveValue('staging');
+  await expect(page.getByText('Approval required')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Use approved CLI for external tests' }).first()).toBeDisabled();
+});

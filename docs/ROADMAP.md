@@ -60,6 +60,13 @@
 - CLI preflight and selection unit tests are part of the existing `npm run test:server` CI gate. **Actual manual-dispatch workflow** requires a separately initiated run and must not be reported as passed solely from the main push workflow.
 - **Next:** Module 9 onboards an authorized separate application and verifies project-specific UI/API behavior rather than generic uptime alone.
 
+## Module 9 milestone — external QA practice pilots (partially accepted)
+
+- Added two opt-in, exact-host approved public practice targets: JSONPlaceholder REST API and The Internet browser automation examples.
+- Each has eight real, requirement-ID-tagged safe tests, versioned coverage manifests and `npm run pilots:validate` for offline traceability checks.
+- Dashboard lists both pilots but disables launch; only explicitly approved CLI executions can reach an external target. Scheduled and manual-dispatch CI remain local-only.
+- **Pending:** Actual Playwright evidence from the public endpoints and validation of a user-owned or explicitly authorized business application. No external requests are made during normal CI.
+
 ## P1 — Reliability and coverage (next)
 
 | Work | Definition of done |

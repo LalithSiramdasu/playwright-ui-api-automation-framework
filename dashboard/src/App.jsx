@@ -8,7 +8,7 @@ import {
   ShieldCheck, ShieldAlert, Square, TerminalSquare, TrendingUp, X,
   XCircle, Zap, AlertCircle,
 } from 'lucide-react';
-import { runsForProject, enabledProjects, selectableSuites, chooseSuite, effectiveBrowser } from './project-selection.mjs';
+import { runsForProject, enabledProjects, selectableSuites, chooseSuite, effectiveBrowser, dashboardCanExecuteEnvironment } from './project-selection.mjs';
 import ReportsWorkbench from './ReportsWorkbench.jsx';
 
 const nav = [
@@ -185,10 +185,10 @@ export default function App() {
     catch (error) { setAlert(error.message); }
   };
   const copy = async () => { try { await navigator.clipboard.writeText(codeCommand); setCopied(true); setTimeout(() => setCopied(false), 1500); } catch { setAlert('Copy unavailable; select the command manually.'); } };
-  const canRun = Boolean(registryLoaded && selectedProject && environments.includes(environment) && allowedSuite && health?.dependenciesReady && !busy && !active);
+  const canRun = Boolean(registryLoaded && selectedProject && dashboardCanExecuteEnvironment(selectedEnvironment) && environments.includes(environment) && allowedSuite && health?.dependenciesReady && !busy && !active);
   const runButton = <button className="primary-button" type="button" onClick={execute} disabled={!canRun}>
     {busy ? <LoaderCircle className="spin" size={16} /> : <Play size={16} fill="currentColor" />}
-    {active ? 'Run in progress' : 'Run selected suite'}
+    {selectedEnvironment?.remote ? 'Use approved CLI for external tests' : active ? 'Run in progress' : 'Run selected suite'}
   </button>;
 
   return <div className="shell">

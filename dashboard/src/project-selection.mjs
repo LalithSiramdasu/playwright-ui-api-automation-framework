@@ -28,3 +28,8 @@ export function chooseSuite(project, suites, preferred = 'smoke') {
 export function effectiveBrowser(project, suite, browser) {
   return project?.type === 'api' || suite === 'api' ? 'all' : browser;
 }
+
+/** External pilots require explicit CLI host approval; dashboard never issues it. */
+export function dashboardCanExecuteEnvironment(details) {
+  return Boolean(details && !details.remote);
+}

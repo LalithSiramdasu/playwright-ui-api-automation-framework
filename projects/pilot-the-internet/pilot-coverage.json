@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "projectId": "pilot-the-internet",
+  "kind": "external-public-qa-practice-sandbox",
+  "testExecution": "explicit-local-opt-in-only",
+  "sourceOfTruth": "Provider documentation and actual service behavior; not business-app requirements",
+  "testCases": [
+    {
+      "requirementId": "PWEB-01",
+      "acceptanceCriterion": "landing page exposes test examples"
+    },
+    {
+      "requirementId": "PWEB-02",
+      "acceptanceCriterion": "link navigation loads checkbox screen"
+    },
+    {
+      "requirementId": "PWEB-03",
+      "acceptanceCriterion": "checkboxes respond to browser actions"
+    },
+    {
+      "requirementId": "PWEB-04",
+      "acceptanceCriterion": "dropdown selection changes its value"
+    },
+    {
+      "requirementId": "PWEB-05",
+      "acceptanceCriterion": "table contains sample rows and expected customer"
+    },
+    {
+      "requirementId": "PWEB-06",
+      "acceptanceCriterion": "numeric input accepts an entered number"
+    },
+    {
+      "requirementId": "PWEB-07",
+      "acceptanceCriterion": "successful status route returns HTTP 200"
+    },
+    {
+      "requirementId": "PWEB-08",
+      "acceptanceCriterion": "missing status route returns HTTP 404"
+    }
+  ],
+  "limitations": [
+    "No credentials or live user data",
+    "GET/HEAD only",
+    "Not scheduled in CI",
+    "Not a substitute for a user-owned application pilot"
+  ]
+}

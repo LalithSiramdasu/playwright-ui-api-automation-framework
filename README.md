@@ -163,6 +163,12 @@ Alongside the full [push/PR verification workflow](.github/workflows/playwright.
 
 Run `node scripts/ci-project.mjs --preflight` locally with the documented `QA_CI_*` variables to validate a selection. **Live remote targets are not dispatchable through this workflow**; the separate local CLI approved-staging policy does not grant blanket permission for CI to contact real services. See [Module 8 CI guide](docs/CI_AUTOMATION.md).
 
+## Module 9 — opt-in external QA practice pilots
+
+Two **public services intended for QA practice** now have fully separated project profiles and 16 reviewed read-only Playwright cases: JSONPlaceholder (REST API) and The Internet (website). Their tests are restricted to `projects/pilot-*/tests/safe/`, require explicit CLI host approval, and **are never run by scheduled or standard CI**. Dashboard project selection shows them but does not launch external tests.
+
+Run `npm run pilots:validate` for an offline requirements-to-test traceability audit. See **[Module 9 pilot runbook](docs/REAL_PROJECT_PILOT.md)** for commands and limitations. An actual owner-authorized business-application validation is still required before claiming production readiness.
+
 ## Useful test commands
 
 | Command | Purpose |

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "projectId": "pilot-jsonplaceholder",
+  "kind": "external-public-qa-practice-sandbox",
+  "testExecution": "explicit-local-opt-in-only",
+  "sourceOfTruth": "Provider documentation and actual service behavior; not business-app requirements",
+  "testCases": [
+    {
+      "requirementId": "PAPI-01",
+      "acceptanceCriterion": "post lookup returns contract fields"
+    },
+    {
+      "requirementId": "PAPI-02",
+      "acceptanceCriterion": "user lookup returns identity contract"
+    },
+    {
+      "requirementId": "PAPI-03",
+      "acceptanceCriterion": "listing posts filtered by user respects parent ID"
+    },
+    {
+      "requirementId": "PAPI-04",
+      "acceptanceCriterion": "nested post comments belong to requested post"
+    },
+    {
+      "requirementId": "PAPI-05",
+      "acceptanceCriterion": "todo item contract contains boolean completion"
+    },
+    {
+      "requirementId": "PAPI-06",
+      "acceptanceCriterion": "filtered user albums respect their owner"
+    },
+    {
+      "requirementId": "PAPI-07",
+      "acceptanceCriterion": "missing post returns HTTP 404"
+    },
+    {
+      "requirementId": "PAPI-08",
+      "acceptanceCriterion": "unrecognized user filter returns empty collection"
+    }
+  ],
+  "limitations": [
+    "No credentials or live user data",
+    "GET/HEAD only",
+    "Not scheduled in CI",
+    "Not a substitute for a user-owned application pilot"
+  ]
+}

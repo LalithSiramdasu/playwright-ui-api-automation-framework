@@ -94,3 +94,11 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - `node scripts/validate-projects.mjs`: 4 registered profiles validated.
 - `node --check scripts/ci-project.mjs`: passed.
 - The new manual/weekly workflow was authored but **not executed by that prior push workflow**. Test it separately with **Actions → Project-aware QA Runs**. The Module 8 push's build/lint/typecheck/regressions require its own GitHub Actions run.
+
+## Module 9 — external QA sandbox pilots (pre-release evidence)
+
+- Confirmed prior Module 8 commit `262c0da` passed GitHub Actions [41853946225](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41853946225).
+- Two explicitly QA-focused public sandbox profiles added with eight Playwright cases each, restricted to read-only safe test directories. `staging` is an execution policy label, not a claim that the vendor serves a private staging deployment.
+- `npm run projects:validate` and `npm run pilots:validate` pass locally. `node --test tests/server/*.test.mjs`: 86 passing after Module 9 changes.
+- `--allow-remote --dry-run` passed for both approved hosts, with exact matching `QA_REMOTE_APPROVAL`; no external requests were made by these checks.
+- Full lint, TypeScript, dashboard and existing Playwright regression must be verified on Module 9's own GitHub Actions commit. **The new external tests are NOT run in CI by design**. Live public-sandbox tests and a genuine user-owned/authorized project pilot still require separately captured run evidence.

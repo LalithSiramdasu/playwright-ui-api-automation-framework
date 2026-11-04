@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "pilot-the-internet",
+  "name": "The Internet \u2014 Browser Practice",
+  "type": "web",
+  "enabled": true,
+  "allowedHosts": [
+    "the-internet.herokuapp.com"
+  ],
+  "environments": {
+    "staging": {
+      "webBaseUrl": "https://the-internet.herokuapp.com/",
+      "readOnly": true
+    }
+  },
+  "suites": [
+    "smoke",
+    "ui",
+    "regression",
+    "negative",
+    "accessibility"
+  ],
+  "credentialEnv": {},
+  "remoteExecution": {
+    "enabled": true
+  }
+}
