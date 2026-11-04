@@ -24,13 +24,16 @@ const writeProfile = (root, dirName, profile) => {
 
 test('Module 1: bundled Northline and API-template profiles both validate', () => {
   const profiles = loadProjectRegistry();
-  assert.deepEqual(profiles.map((profile) => profile.id), ['northline-goods', 'sample-api', 'starter-api']);
+  assert.deepEqual(profiles.map((profile) => profile.id), ['northline-goods', 'sample-api', 'sample-web', 'starter-api']);
   assert.equal(profiles[0].environments.local.webBaseUrl, 'http://127.0.0.1:4173/');
   assert.equal(profiles[0].type, 'hybrid');
   assert.equal(profiles[1].enabled, true);
   assert.equal(profiles[1].type, 'api');
-  assert.equal(profiles[2].enabled, false);
-  assert.deepEqual(profiles[2].credentialEnv, { token: 'STARTER_API_TOKEN' });
+  assert.equal(profiles[2].enabled, true);
+  assert.equal(profiles[2].type, 'web');
+  assert.equal(profiles[2].environments.local.webBaseUrl, 'http://127.0.0.1:4175/');
+  assert.equal(profiles[3].enabled, false);
+  assert.deepEqual(profiles[3].credentialEnv, { token: 'STARTER_API_TOKEN' });
   assert.ok(SUPPORTED_SUITES.includes('api'));
 });
 

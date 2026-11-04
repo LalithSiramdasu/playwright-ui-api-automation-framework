@@ -43,3 +43,9 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Module 2 blocks all remote and read-only targets until Module 5 adds reviewed safe-run policy. Do not remove that safeguard merely to make an external test run.
 - Keep `node scripts/run-project.mjs` and the dashboard's `POST /api/runs` on the same shared `resolveProjectRun` preflight.
 - Module 6 adds a visual project switcher; do not claim the current dashboard UI has one.
+
+## Module 3 browser automation
+
+- Reusable browser helpers belong in `src/web/`; target-specific selectors, credentials and assertions stay in `projects/<id>/pages/` and `projects/<id>/tests/ui/`.
+- The independent `sample-web` fixture uses synthetic local credentials only. Never log raw credentials, browser storage state, Authorization headers, or query-string tokens.
+- Module 3 diagnostics are bounded and redact common secrets, but they are not a complete security boundary. Keep Module 2 remote-target safeguards until Module 5.

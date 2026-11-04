@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "sample-web",
+  "name": "Independent Sample Website",
+  "type": "web",
+  "enabled": true,
+  "allowedHosts": ["127.0.0.1"],
+  "environments": {
+    "local": {
+      "webBaseUrl": "http://127.0.0.1:4175",
+      "readOnly": false
+    }
+  },
+  "suites": ["smoke", "ui", "regression", "negative", "accessibility"],
+  "credentialEnv": {
+    "username": "SAMPLE_WEB_USERNAME",
+    "password": "SAMPLE_WEB_PASSWORD"
+  }
+}

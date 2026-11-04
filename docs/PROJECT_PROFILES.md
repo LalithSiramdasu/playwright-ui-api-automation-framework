@@ -14,6 +14,7 @@ The former **Good Form** brand has been changed to **Northline Goods**; its loca
 | --- | --- | --- | --- |
 | `northline-goods` | hybrid (website + REST API) | configured | `http://127.0.0.1:4173` (local fixture) |
 | `sample-api` | REST API | configured | `http://127.0.0.1:4174` (independent local fixture) |
+| `sample-web` | website | configured | `http://127.0.0.1:4175` (independent local browser fixture) |
 | `starter-api` | REST API | **disabled template** | `https://api.example.test/v1/` (reserved, non-live example domain) |
 
 **Never enable `starter-api` as-is.** Replace its documentation-only URL with an authorized API, update the allowlist and add real project-specific tests in Module 2/4 before execution.
@@ -30,9 +31,10 @@ npm run test:server
 Expected validator output:
 
 ```text
-Validated 3 project profile(s):
+Validated 4 project profile(s):
 - northline-goods | hybrid | configured | local
 - sample-api | api | configured | local
+- sample-web | web | configured | local
 - starter-api | api | template disabled | staging
 Profiles validated. Use `npm run test:sample-api` to run the independent Module 2 fixture.
 ```
@@ -46,8 +48,8 @@ JSON files reside in `projects/<project-id>/project.config.json` and must use `s
 ```json
 {
   "schemaVersion": 1,
-  "id": "sample-web",
-  "name": "Sample Web Application",
+  "id": "example-external-web",
+  "name": "Example Remote Website",
   "type": "web",
   "enabled": false,
   "allowedHosts": ["staging.example.test"],
@@ -65,7 +67,7 @@ JSON files reside in `projects/<project-id>/project.config.json` and must use `s
 }
 ```
 
-`SAMPLE_USERNAME` and `SAMPLE_PASSWORD` are **environment-variable names**, not credentials. Never commit real passwords, tokens, cookies, or API keys. Add variable names to `.env.example` if useful; use a local ignored `.env` file or a CI secrets store for values. Module 2 implements separate per-project test directories. Modules 3–5 will implement safer remote target execution, authentication injection, and log redaction.
+`SAMPLE_USERNAME` and `SAMPLE_PASSWORD` are **environment-variable names**, not credentials. Never commit real passwords, tokens, cookies, or API keys. Add variable names to `.env.example` if useful; use a local ignored `.env` file or a CI secrets store for values. Module 2 implements separate per-project test directories. Module 3 adds reusable local website-authentication and browser-diagnostics helpers. Module 5 will add approved remote-target execution and stronger secrets handling.
 
 ## Validation rules
 

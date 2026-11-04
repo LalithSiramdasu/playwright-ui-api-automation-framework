@@ -19,6 +19,13 @@
 - CLI runner and dashboard POST endpoint now honor explicit project selections. Existing dashboard buttons default to Northline Goods.
 - **Next:** Modules 3–5 add reusable external website/API test adapters, secret handling and authorized remote-target policy. Module 6 provides graphical project selection and per-project analytics.
 
+## Module 3 implementation milestone — reusable website automation
+
+- Shared Page Object helpers, accessible form login, browser-context API-cookie sessions and redacted browser diagnostics in `src/web/`.
+- An isolated Sample Website profile with a real local server, guarded pages, project-specific Page Objects, and Chromium/Firefox/WebKit UI scenarios.
+- A third independent CI test suite; preserve Northline Goods and Sample API isolation. [Website automation guide](WEBSITE_AUTOMATION.md).
+- **Next:** Module 4 REST API clients and contract verification; Module 5 approved remote-target safeguards.
+
 ## P1 — Reliability and coverage (next)
 
 | Work | Definition of done |

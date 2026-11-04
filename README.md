@@ -113,7 +113,7 @@ See **[store design and real-state behavior](docs/STORE_DESIGN.md)** and **[the 
 
 To restore the project later, `commands.txt` contains the full `git clone` / `npm ci` sequence in addition to the earlier local commands.
 
-## Multi-project QA runner — Modules 1 and 2
+## Multi-project QA runner — Modules 1–3
 
 The validated **project registry** (Module 1) now feeds a **project-aware Playwright runner** (Module 2). Two independent local fixtures have runnable tests: **Northline Goods** (hybrid UI/API) and **Independent Sample API** (API-only). The disabled `starter-api` profile remains a documentation template.
 
@@ -128,6 +128,20 @@ npm run test:sample-api
 The original `npm test` workflow is preserved. In the dashboard, existing Run buttons still default to Northline; the backend accepts explicit `projectId` and `environment` for selected runs. The visual project switcher and project-level analytics are planned for **Module 6**.
 
 **Safety boundary:** Module 2 only executes explicitly configured local loopback fixtures. Disabled, remote, read-only, unsupported and arbitrary script/path selections are blocked. Authorized external website/API execution needs the reusable adapters and safety policy planned for Modules 3–5. See [Module 2 runner guide](docs/PROJECT_RUNNER.md), [project profiles](docs/PROJECT_PROFILES.md), and [implementation roadmap](docs/MODULE_IMPLEMENTATION_PLAN.md).
+
+## Module 3 — reusable website automation
+
+The common `src/web/` helpers provide reusable browser navigation, form login, cookie-backed API sessions and redacted browser diagnostics. The **Independent Sample Website** at `projects/sample-web/` is an additional local target with its own session handling, Page Objects and Chromium/Firefox/WebKit tests.
+
+```bash
+npm run projects:validate
+npm run test:sample-web
+npm run sample-web:start   # optional manual site at http://127.0.0.1:4175
+```
+
+Use `node scripts/run-project.mjs --project sample-web --environment local --suite smoke --browser chromium` for a quick smoke run. See [Website Automation Guide](docs/WEBSITE_AUTOMATION.md).
+
+**External websites remain deliberately blocked** until Module 5 adds explicit authorization, target isolation and safe credential handling. The dashboard's visual project selector remains Module 6.
 
 ## Useful test commands
 

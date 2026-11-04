@@ -81,3 +81,24 @@ node scripts/run-project.mjs --project northline-goods --environment local --sui
 npm run test:sample-api
 
 # Read docs/PROJECT_RUNNER.md for setup and safety limitations.
+
+============================================================
+MODULE 3 — REUSABLE WEBSITE AUTOMATION
+============================================================
+
+npm run projects:validate
+npm run test:server
+
+# Dry run, no browser or server started:
+node scripts/run-project.mjs --project sample-web --environment local --suite smoke --browser chromium --dry-run
+
+# Smoke tests in Chromium:
+node scripts/run-project.mjs --project sample-web --environment local --suite smoke --browser chromium
+
+# Independent website tests on all three browsers:
+npm run test:sample-web
+
+# Optional local site at http://127.0.0.1:4175:
+npm run sample-web:start
+
+# Remote website execution requires Module 5 safety controls.

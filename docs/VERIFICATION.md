@@ -59,3 +59,10 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 ## Module 2 CI correction
 
 The initial Module 2 commit (`9a03ca6d`) passed typecheck, lint, profile validation and 31 standalone tests, but the Playwright TypeScript config loader attempted to transform an imported Node ESM module containing `import.meta.url` as CommonJS. The follow-up fix reads the data-only profile directly inside `playwright.config.ts`; CLI/dashboard continue to perform the shared Node ESM preflight. Cross-browser verification requires the corrected commit's own GitHub Actions run.
+
+## Module 3 local pre-push checks — 2026-11-04
+
+- Node syntax checks passed for the independent Sample Website server and its integration test file.
+- Manual local HTTP checks confirmed the healthy fixture, private-route redirect and successful cookie-based login response.
+- Full registered-profile validation, standalone tests, TypeScript, lint, dashboard build and browser suites must be checked on **this Module 3 commit's own CI run**; do not reuse older commit results.
+- Remote application execution remains blocked pending Module 5.

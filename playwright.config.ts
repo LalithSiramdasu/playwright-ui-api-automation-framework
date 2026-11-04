@@ -54,6 +54,7 @@ const reportPrefix = selection ? `${selection.projectId}/${selection.environment
 const localServers: Record<string, { command: string; url: string }> = {
   'northline-goods': { command: 'npm run demo:start', url: 'http://127.0.0.1:4173/health' },
   'sample-api': { command: 'node projects/sample-api/server.mjs', url: 'http://127.0.0.1:4174/health' },
+  'sample-web': { command: 'node projects/sample-web/server.mjs', url: 'http://127.0.0.1:4175/health' },
 };
 const webServer = selection
   ? selection.environment === 'local' ? localServers[selection.projectId] : undefined

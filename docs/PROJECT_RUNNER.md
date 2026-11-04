@@ -10,6 +10,7 @@ Two enabled, **independent local test targets**:
 | --- | --- | --- | --- | --- |
 | `northline-goods` | Hybrid UI + API | `tests/` (legacy kept unchanged) | `http://127.0.0.1:4173` | All existing browser and API tests |
 | `sample-api` | API-only | `projects/sample-api/tests/` | `http://127.0.0.1:4174` | Independent local server and three API tests |
+| `sample-web` | Browser UI | `projects/sample-web/tests/` | `http://127.0.0.1:4175` | Independent site, session login, tests and diagnostics |
 | `starter-api` | API-only | None | Placeholder HTTPS address | Disabled, intentionally unrunnable |
 
 The project ID is only a validated identifier; the runner determines the test directory by **trusted convention**. JSON profiles cannot provide arbitrary paths, startup scripts or Playwright arguments. For Northline the historic root tests remain compatible with `npm test`, while other projects use `projects/<id>/tests/`.
@@ -30,6 +31,7 @@ node scripts/run-project.mjs --project sample-api --environment local --suite ap
 # Actually execute independent project suites:
 node scripts/run-project.mjs --project northline-goods --environment local --suite smoke --browser chromium
 npm run test:sample-api
+npm run test:sample-web
 
 # The original Northline suite still works:
 npm test
@@ -62,15 +64,15 @@ The read-only `GET /api/projects` endpoint returns configured projects (no secre
 ## Security limitations and Module 5 dependency
 
 - **No non-loopback execution is allowed yet.** Any read-only environment or target outside loopback is rejected rather than making unapproved requests. This restriction is intentional until Module 5 adds a reviewed read-only test policy, authentication, and target authorization.
-- The only local startup commands are hardcoded in `playwright.config.ts` for `northline-goods` and `sample-api`. Remote profiles never carry executable startup commands.
+- The only local startup commands are hardcoded in `playwright.config.ts` for `northline-goods`, `sample-api` and `sample-web`. Remote profiles never carry executable startup commands.
 - This is a **single-user local runner** bound to `127.0.0.1`; the React frontend is not a hosted test SaaS.
 - Profiles cannot discover website business rules automatically. Subsequent modules add reusable Page Object/API adapters for *authorized* external applications.
-- Never commit API credentials, tokens or real login passwords. Modules 3–5 add proper per-project authentication/data setup and redaction.
+- Never commit API credentials, tokens or real login passwords. Module 3 includes reusable local authentication and browser diagnostics; Module 5 will add approved live credential handling and isolated data setup.
 
 ## Acceptance checklist
 
 - [x] Northline tests preserved and selected by default.
-- [x] Separate enabled Sample API profile with different URL and test directory.
+- [x] Separate Sample API and Sample Website profiles, with distinct URLs and test directories.
 - [x] Strict preflight rejects malformed, disabled, wrong-browser, missing-directory and remote selections.
 - [x] Project resolution and CLI dry-run are tested with Node's test runner.
 - [x] Dashboard routes selected runs to the same validated resolver.
