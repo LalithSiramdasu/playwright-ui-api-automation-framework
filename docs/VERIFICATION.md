@@ -35,3 +35,16 @@ To see real UI behavior, start `npm run demo:start` and visit `http://127.0.0.1:
 ## Historical starter notes — 2026-11-03
 
 At initial assembly, the dependency-free API suite passed **5/5** and Node syntax checks passed, but the complete Playwright suite was not available in that assembly environment. This is a historical note, not a current release result.
+
+
+## Module 1 / Northline Goods rename — local checks, 2026-11-04
+
+| Check | Evidence |
+| --- | --- |
+| `npm run projects:validate` | 2 valid profiles (1 local configured + 1 disabled API template) |
+| `npm run test:server` | 20 passed, 0 failed: 12 original/dashboard + 8 registry tests |
+| `node --check` (new registry/validator, dashboard server, demo app) | Passed |
+| Playwright cross-browser suite | Must be checked in GitHub Actions for the new commit |
+| Dashboard React build, TypeScript, ESLint | Must be checked in GitHub Actions for the new commit |
+
+These checks exercise profile validation and non-breaking dashboard discovery, **not multi-project test execution**. Module 2 will implement actual project-specific dispatch.

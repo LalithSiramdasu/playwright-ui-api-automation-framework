@@ -27,7 +27,8 @@
     "dashboard:build": "npm --prefix dashboard run build",
     "dashboard:start": "node dashboard/server.mjs",
     "dashboard": "npm run dashboard:build && npm run dashboard:start",
-    "dashboard:dev": "npm --prefix dashboard run dev"
+    "dashboard:dev": "npm --prefix dashboard run dev",
+    "projects:validate": "node scripts/validate-projects.mjs"
   },
   "engines": {
     "node": ">=20"

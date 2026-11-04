@@ -1,12 +1,12 @@
-# Good Form storefront — design rationale and QA state contract
+# Northline Goods storefront — design rationale and QA state contract
 
 ## Purpose
 
-Good Form is a **local testing fixture** for the Playwright UI/API framework, not a production shop or a simulated commercial success story. The application includes a local Node API and real workflow-level loading, empty, failure and recovery behavior. The UX states are not a separate test gallery.
+Northline Goods is a **local testing fixture** for the Playwright UI/API framework, not a production shop or a simulated commercial success story. The application includes a local Node API and real workflow-level loading, empty, failure and recovery behavior. The UX states are not a separate test gallery.
 
 ## Visual direction
 
-Chosen from the supplied design video: **Cool Steel Grey**, anchored by midnight charcoal and a restrained vermilion accent. Rather than copying the sample design, Good Form uses an editorial storefront layout appropriate for a compact set of everyday objects.
+Chosen from the supplied design video: **Cool Steel Grey**, anchored by midnight charcoal and a restrained vermilion accent. Rather than copying the sample design, Northline Goods uses an editorial storefront layout appropriate for a compact set of everyday objects.
 
 | Token | Value | Role |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ The user-supplied image listed six public GitHub repositories containing UI desi
 - [Emil Kowalski / apple-design](https://github.com/emilkowalski/skills/blob/main/skills/apple-design/SKILL.md) — predictable interactive feedback, interruption and reduced motion.
 - [elayadesign / landing-page-design](https://github.com/elayadesign/ai-design-skills/blob/main/skills/landing-page-design/SKILL.md) — content realism, form errors, focus visibility, loading/empty states and no dead controls.
 
-No third-party skill scripts or dependencies are required to run Good Form; the project is intentionally standalone.
+No third-party skill scripts or dependencies are required to run Northline Goods; the project is intentionally standalone.
 
 ## Ten integrated shopping states
 

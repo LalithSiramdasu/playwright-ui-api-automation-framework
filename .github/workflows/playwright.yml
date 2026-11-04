@@ -31,6 +31,8 @@ jobs:
         run: npm run typecheck
       - name: Lint
         run: npm run lint
+      - name: Validate registered project profiles
+        run: npm run projects:validate
       - name: Check standalone API integration tests
         run: npm run test:server
       - name: Install browsers and OS dependencies

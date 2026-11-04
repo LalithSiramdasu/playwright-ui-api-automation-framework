@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "northline-goods",
+  "name": "Northline Goods",
+  "type": "hybrid",
+  "enabled": true,
+  "allowedHosts": ["127.0.0.1"],
+  "environments": {
+    "local": {
+      "webBaseUrl": "http://127.0.0.1:4173",
+      "apiBaseUrl": "http://127.0.0.1:4173",
+      "readOnly": false
+    }
+  },
+  "suites": ["smoke", "regression", "ui", "api", "negative", "accessibility"],
+  "credentialEnv": {}
+}

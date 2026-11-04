@@ -103,7 +103,7 @@ Open **http://127.0.0.1:4300**. The dashboard runs *only on localhost* and runs 
 
 See **[Dashboard guide](docs/DASHBOARD.md)** for setup, architecture, security, and result semantics.
 
-## Good Form — shopping application and integrated UX states
+## Northline Goods — shopping application and integrated UX states
 
 The bundled `demo-app/` uses a **steel-grey editorial storefront** with a responsive layout, keyboard-accessible forms, and functional shopping flows. Prices are shown in **Indian rupees (INR)**; the API represents money in integer **paise** (`pricePaise` and `totalPaise`) to avoid floating-point currency arithmetic.
 
@@ -112,6 +112,17 @@ The 10 requested UX conditions are part of real workflows, **not a separate Expe
 See **[store design and real-state behavior](docs/STORE_DESIGN.md)** and **[the implementation roadmap](docs/ROADMAP.md)**. The corresponding browser tests are in `tests/ui/states.spec.ts`.
 
 To restore the project later, `commands.txt` contains the full `git clone` / `npm ci` sequence in addition to the earlier local commands.
+
+## Multi-project framework: Module 1 (project registry)
+
+**Module 1 is implemented:** project profiles for website/API/hybrid targets, local/staging environment declarations, explicit allowed hosts, supported suites and references to secret environment *variable names*. Two profiles are included: **Northline Goods** (local working fixture) and **REST API Starter** (disabled template using a reserved documentation-only domain; not a live API).
+
+```bash
+npm run projects:validate
+npm run test:server
+```
+
+The dashboard backend now exposes a **read-only** `GET /api/projects` for previewing these profiles. No external URLs are contacted and the dashboard's Run button **still runs the existing Northline Goods suite**. Project-aware test selection/dispatch will be implemented in Module 2; this release does not imply arbitrary websites can already be tested. See [project profile guide](docs/PROJECT_PROFILES.md) and [module implementation plan](docs/MODULE_IMPLEMENTATION_PLAN.md).
 
 ## Useful test commands
 

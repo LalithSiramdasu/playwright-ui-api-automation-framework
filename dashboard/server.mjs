@@ -6,6 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUITES, summarizeReport } from './reporting.mjs';
+import { loadProjectRegistry } from '../src/core/project-registry.mjs';
 
 const dashboardDir = dirname(fileURLToPath(import.meta.url));
 const root = resolve(dashboardDir, '..');
@@ -143,6 +144,12 @@ const server = createServer(async (req, res) => {
       return send(res, 200, { status: 'ok', dependenciesReady: existsSync(playwrightCli), node: process.version, activeId });
     }
     if (req.method === 'GET' && pathname === '/api/suites') return send(res, 200, { suites: SUITES });
+    if (req.method === 'GET' && pathname === '/api/projects') {
+      const projects = loadProjectRegistry().map(({ id, name, type, enabled, environments, suites }) => ({
+        id, name, type, enabled, environments: Object.keys(environments), suites,
+      }));
+      return send(res, 200, { projects, executionMode: 'demo-only' });
+    }
     if (req.method === 'GET' && pathname === '/api/runs') {
       return send(res, 200, { runs: runs.map(recordForList), activeId });
     }

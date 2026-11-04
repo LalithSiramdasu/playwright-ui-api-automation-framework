@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "starter-api",
+  "name": "REST API Starter (configure before enabling)",
+  "type": "api",
+  "enabled": false,
+  "allowedHosts": ["api.example.test"],
+  "environments": {
+    "staging": {
+      "apiBaseUrl": "https://api.example.test/v1/",
+      "readOnly": true
+    }
+  },
+  "suites": ["smoke", "api", "negative", "regression"],
+  "credentialEnv": {"token": "STARTER_API_TOKEN"}
+}

@@ -4,7 +4,7 @@ This is a learning-focused, local QA automation framework. Treat its frontend as
 
 ## Visual system
 
-- Brand: **Good Form**, a compact editorial collection of everyday objects.
+- Brand: **Northline Goods**, a compact editorial collection of everyday objects.
 - Core palette: charcoal `#17191c`, steel `#929da7`, warm paper `#f5f5f2`, restrained vermilion `#ec5a3e`.
 - Preserve layout rhythm, deliberate asymmetry, semantic headings, responsive grids, and accessible focus states.
 - Avoid random gradients, stock imagery, fake reviews, unsupported performance claims, inert buttons, and decorative-only controls.
@@ -27,3 +27,11 @@ See `docs/STORE_DESIGN.md` for the supplied color and 10-state videos and the pu
 ## Quality gates
 
 Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and inspect the UI at desktop/mobile breakpoints. Report what actually passed; never fabricate counts.
+
+## Multi-project migration (Module 1)
+
+- Project profiles in `projects/*/project.config.json` are validated data, never executable scripts or user-defined paths.
+- Keep the `starter-api` profile disabled until an authorized target and actual test suite exist.
+- The demo shop's historical selectors, API endpoints, and bundled Playwright tests remain stable.
+- `GET /api/projects` is read-only discovery; do not claim multi-project execution until Module 2.
+- Never store credentials in profiles or return their values via dashboard APIs.

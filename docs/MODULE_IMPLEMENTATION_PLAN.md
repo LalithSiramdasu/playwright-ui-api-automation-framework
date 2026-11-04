@@ -1,8 +1,8 @@
 # Multi-Project QA Framework — Module-by-Module Implementation Plan
 
-**Status:** Architecture and delivery plan only. The existing Good Form UI/API suite and React dashboard are working reference implementations; arbitrary real websites/APIs are **not** yet onboarded.
+**Status:** Module 1 (validated profile registry) implemented. Modules 2–9 remain planned. The existing Northline Goods UI/API suite and React dashboard are working reference implementations; arbitrary real websites/APIs are **not** yet onboarded.
 
-**Goal:** A single local QA Control Center that selects an authorized target project and environment, runs meaningful project-specific Playwright browser/API suites, and stores independently attributable reports. Preserve Good Form as regression coverage.
+**Goal:** A single local QA Control Center that selects an authorized target project and environment, runs meaningful project-specific Playwright browser/API suites, and stores independently attributable reports. Preserve Northline Goods as regression coverage.
 
 ## Concept: application under test versus test framework
 
@@ -45,7 +45,7 @@ Authorized website         Authorized REST API
 
 ```text
 projects/
-  goodform/
+  northline-goods/
     project.config.json
     tests/ui/
     tests/api/
@@ -76,16 +76,16 @@ Project profiles may be JSON or TypeScript, but must be schema-validated and map
 
 | Module | Implement | Concrete output / definition of done | Depends on |
 | --- | --- | --- | --- |
-| **0 — Baseline and invariants** | Record current Playwright/CI results; document stable Good Form selectors, endpoint contracts, analytics and trusted CI. | Existing Good Form suite and dashboard remain green; baseline commit and checks recorded. | None |
-| **1 — Project registry and environments** | Versioned, validated profiles: project ID, name, type (web/api/hybrid), dev/staging URL, allowed hosts, supported suites, test directory, environment-variable names. | At least two profiles load correctly; malformed IDs/URLs/secrets rejected; demo starts as before. | 0 |
-| **2 — Project-aware execution engine** | Resolve selected project/environment into a safe, fixed test directory and Playwright config; validate browser/suite combinations; fail safely at preflight; keep one local active run. | CLI starts Good Form and a second fixture independently; selecting one never executes another's tests. | 1 |
-| **3 — Reusable website automation** | Common browser fixtures, auth-state support, Page Object scaffolds, navigation, useful error/console diagnostics; per-project selectors and assertions. | A second authorized website passes its own login/read-only UI smoke tests; Good Form unchanged. | 2 |
-| **4 — Reusable REST API automation** | Typed request helpers, auth strategies, bearer/API-key injection through secrets, expected status/JSON/schema validation, positive/negative tests and OpenAPI mapping when available. | A second authorized API passes contract and negative cases with correct failure messages; no hardcoded Good Form URLs or credentials. | 2 |
+| **0 — Baseline and invariants** | Record current Playwright/CI results; document stable Northline Goods selectors, endpoint contracts, analytics and trusted CI. | Existing Northline Goods suite and dashboard remain green; baseline commit and checks recorded. | None |
+| **1 — Project registry and environments** (implemented) | Versioned, validated profiles: project ID, name, type (web/api/hybrid), dev/staging URL, allowed hosts, supported suites, test directory, environment-variable names. | At least two profiles load correctly; malformed IDs/URLs/secrets rejected; demo starts as before. | 0 |
+| **2 — Project-aware execution engine** | Resolve selected project/environment into a safe, fixed test directory and Playwright config; validate browser/suite combinations; fail safely at preflight; keep one local active run. | CLI starts Northline Goods and a second fixture independently; selecting one never executes another's tests. | 1 |
+| **3 — Reusable website automation** | Common browser fixtures, auth-state support, Page Object scaffolds, navigation, useful error/console diagnostics; per-project selectors and assertions. | A second authorized website passes its own login/read-only UI smoke tests; Northline Goods unchanged. | 2 |
+| **4 — Reusable REST API automation** | Typed request helpers, auth strategies, bearer/API-key injection through secrets, expected status/JSON/schema validation, positive/negative tests and OpenAPI mapping when available. | A second authorized API passes contract and negative cases with correct failure messages; no hardcoded Northline Goods URLs or credentials. | 2 |
 | **5 — Data, secrets and safe test environments** | Fixtures with setup/teardown, unique test entities, optional mocking, local .env guidance, log redaction, production read-only mode and explicit mutation approval. | Tests run in isolation and on repeat; credentials excluded from Git/reports; unauthorized/destructive actions blocked. | 3, 4 |
 | **6 — Multi-project dashboard UX** | Project/environment selector, supported suite/browser controls, preflight statuses and project-aware actions. | Operator selects a second project and executes its tests from http://127.0.0.1:4300 with no source edits; unsupported settings clearly explained. | 1, 2, 5 |
 | **7 — Structured reports and analytics** | Namespace runs by project/environment/branch/commit; searchable cases, accurate skipped/flaky/retried counts, HTML report links, JSON/CSV export and confirmed deletion. | No cross-project mixing; runs survive restart; logs and artifacts remain attributable and safe. | 6 |
 | **8 — CI/CD integration** | Parameterized GitHub Actions for selected project/environment; npm ci, bounded timeouts, secrets, pull request and optional scheduled smoke checks, artifact retention. | Both reference targets have independently verifiable green workflows; induced test failure correctly fails CI and includes evidence. | 3-7 |
-| **9 — Real-world pilot and handover** | Onboard one separate user-owned/authorized website and one authorized REST API (or one hybrid app); create documented requirements-to-test matrix, setup and troubleshooting guide. | Real project-specific UI/API assertions pass in local runner and CI; operator can onboard next project without modifying Good Form code. | 0-8 |
+| **9 — Real-world pilot and handover** | Onboard one separate user-owned/authorized website and one authorized REST API (or one hybrid app); create documented requirements-to-test matrix, setup and troubleshooting guide. | Real project-specific UI/API assertions pass in local runner and CI; operator can onboard next project without modifying Northline Goods code. | 0-8 |
 
 ### Implementation sequence
 
@@ -131,8 +131,8 @@ A basic website smoke check can observe HTTP availability, initial page renderin
 
 ## Definition of "reusable MVP complete"
 
-A user can choose Good Form or another authorized project, select staging and an applicable suite, launch its own browser/API tests, see accurate project-isolated results, reproduce failures, and view the run in CI. The Good Form suite must continue to pass.
+A user can choose Northline Goods or another authorized project, select staging and an applicable suite, launch its own browser/API tests, see accurate project-isolated results, reproduce failures, and view the run in CI. The Northline Goods suite must continue to pass.
 
 ## Phase start — Module 0 → Module 1
 
-Start by adding **read-only project profile validation and unit tests**, without touching the successful demo tests or the dashboard runner. Validate a Good Form profile and a second sample profile first. Only after validation is green should the runner and dashboard be rewired.
+**Completed:** project registry, two validated profiles (Northline Goods + disabled REST API starter), safe URL/host/secret-variable checks, read-only dashboard discovery, CLI validation and Node tests. **Next:** implement Module 2 project-aware runner dispatch while preserving the existing Northline suite.

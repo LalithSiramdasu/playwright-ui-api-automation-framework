@@ -1,4 +1,4 @@
-/** GOOD FORM — real UX states integrated into the shopping journey. */
+/** NORTHLINE GOODS — real UX states integrated into the shopping journey. */
 const $ = (id) => document.getElementById(id);
 const loginScreen = $('login-screen');
 const shopScreen = $('shop-screen');

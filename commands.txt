@@ -51,3 +51,15 @@ npm test
 # Note: dashboard/data/ is ignored by Git and won't return after cloning.
 # Back up local test history/reports separately if you need to preserve past analytics.
 # Never put real API keys or production passwords in this public repository.
+
+
+============================================================
+MODULE 1 — VALIDATE MULTI-PROJECT CONFIGURATION (NO TEST EXECUTION)
+============================================================
+
+npm run projects:validate
+npm run test:server
+
+# With the QA dashboard running, inspect read-only project metadata:
+# http://127.0.0.1:4300/api/projects
+# Module 2 will add safe selection/execution for additional projects.

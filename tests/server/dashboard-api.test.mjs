@@ -63,3 +63,14 @@ test('dashboard rejects invalid suites and untrusted origins', async () => {
   });
   assert.equal(incompatible.status, 400);
 });
+
+
+test('dashboard lists validated project profiles without exposing URLs or secrets', async () => {
+  const response = await request('/api/projects');
+  assert.equal(response.status, 200);
+  assert.equal(response.body.executionMode, 'demo-only');
+  assert.deepEqual(response.body.projects.map((project) => project.id), ['northline-goods', 'starter-api']);
+  assert.equal(response.body.projects[1].enabled, false);
+  assert.equal(JSON.stringify(response.body).includes('STARTER_API_TOKEN'), false);
+  assert.equal(JSON.stringify(response.body).includes('api.example.test'), false);
+});
