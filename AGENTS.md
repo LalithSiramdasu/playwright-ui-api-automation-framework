@@ -49,3 +49,11 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Reusable browser helpers belong in `src/web/`; target-specific selectors, credentials and assertions stay in `projects/<id>/pages/` and `projects/<id>/tests/ui/`.
 - The independent `sample-web` fixture uses synthetic local credentials only. Never log raw credentials, browser storage state, Authorization headers, or query-string tokens.
 - Module 3 diagnostics are bounded and redact common secrets, but they are not a complete security boundary. Keep Module 2 remote-target safeguards until Module 5.
+
+## Module 4 REST API testing contracts
+
+- Keep the reusable `src/api/` client independent of Northline and Sample API endpoints.
+- Use local fixture credentials only in `projects/sample-api/`; real project secrets belong in environment variables.
+- The JSON checker supports a limited subset of JSON Schema, not complete OpenAPI/JSON Schema.
+- Do not bypass the runner's local-only restriction before Module 5 authorizes and constrains external targets.
+- Maintain old Sample API `/health` and `/api/inventory` contracts and run the full existing suite on each change.

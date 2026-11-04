@@ -66,3 +66,10 @@ The initial Module 2 commit (`9a03ca6d`) passed typecheck, lint, profile validat
 - Manual local HTTP checks confirmed the healthy fixture, private-route redirect and successful cookie-based login response.
 - Full registered-profile validation, standalone tests, TypeScript, lint, dashboard build and browser suites must be checked on **this Module 3 commit's own CI run**; do not reuse older commit results.
 - Remote application execution remains blocked pending Module 5.
+
+## Module 4 pre-push local verification (2026-11-04)
+
+- `node --test tests/server/sample-api.test.mjs tests/server/api-contract.test.mjs`: **10/10 passed** in the local working tree.
+- `node --check` on the JSON contract checker and updated sample API server: passed.
+- Full TypeScript, lint, dashboard build, all Playwright projects: verify using **this commit's own GitHub Actions run**, not earlier runs.
+- The 21 Sample Website tests passed in the user's Windows screenshot before Module 4; rerun CI to demonstrate no regressions.

@@ -102,3 +102,20 @@ npm run test:sample-web
 npm run sample-web:start
 
 # Remote website execution requires Module 5 safety controls.
+
+============================================================
+MODULE 4 — REUSABLE REST API AUTOMATION
+============================================================
+
+# From VS Code terminal at project root, run one command per line:
+git status
+git pull origin main
+npm run projects:validate
+npm run test:server
+npm run test:sample-api
+
+# Check the HTML report after the API run:
+npx playwright show-report playwright-report/sample-api/local
+
+# The Sample API starts automatically during the automated suite.
+# It uses fake localhost credentials only; real remote testing awaits Module 5.

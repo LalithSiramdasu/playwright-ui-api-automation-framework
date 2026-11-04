@@ -143,6 +143,17 @@ Use `node scripts/run-project.mjs --project sample-web --environment local --sui
 
 **External websites remain deliberately blocked** until Module 5 adds explicit authorization, target isolation and safe credential handling. The dashboard's visual project selector remains Module 6.
 
+## Module 4 — reusable REST API automation
+
+The shared API testing library in `src/api/` now supports project-specific HTTP requests, bearer-token and API-key auth, positive/negative tests and a limited runtime JSON contract validator. `projects/sample-api/` has a separate deterministic REST target and real integration tests. The original Northline and Sample Website suites are unchanged.
+
+```bash
+npm run test:sample-api         # Sample REST API tests, no browser required
+npm run test:server             # Node contract + API integration checks
+```
+
+See [API automation guide](docs/API_AUTOMATION.md). Only local fixture targets can currently execute; Module 5 is required before authorized external staging/production testing. The JSON contract helper is **not** a complete JSON Schema/OpenAPI implementation.
+
 ## Useful test commands
 
 | Command | Purpose |

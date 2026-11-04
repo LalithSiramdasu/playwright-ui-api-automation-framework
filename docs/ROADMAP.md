@@ -26,6 +26,13 @@
 - A third independent CI test suite; preserve Northline Goods and Sample API isolation. [Website automation guide](WEBSITE_AUTOMATION.md).
 - **Next:** Module 4 REST API clients and contract verification; Module 5 approved remote-target safeguards.
 
+## Module 4 implementation milestone — reusable REST API automation
+
+- Shared typed API client and per-test fixtures support REST verbs, query parameters, bearer and API-key authentication.
+- A limited, explicitly documented JSON contract validator checks status, Content-Type and response structure.
+- Independent Sample API now includes token login and authenticated read-only endpoints with negative scenarios.
+- **Next:** Module 5 implements secrets/redaction, target authorization, test data isolation and safe execution policies for external APIs/websites.
+
 ## P1 — Reliability and coverage (next)
 
 | Work | Definition of done |
