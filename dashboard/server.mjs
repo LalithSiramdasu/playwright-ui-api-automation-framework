@@ -41,7 +41,8 @@ function send(res, code, value) {
   res.end(JSON.stringify(value));
 }
 function appendLog(run, chunk) {
-  const lines = String(chunk).replace(/\x1b\[[0-9;]*m/g, '').split(/\r?\n/).filter(Boolean);
+  const ansi = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+  const lines = String(chunk).replace(ansi, '').split(/\r?\n/).filter(Boolean);
   run.logs.push(...lines);
   if (run.logs.length > MAX_LOG_LINES) run.logs.splice(0, run.logs.length - MAX_LOG_LINES);
 }
