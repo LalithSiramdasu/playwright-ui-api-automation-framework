@@ -69,11 +69,14 @@ test('dashboard lists validated project profiles without exposing URLs or secret
   const response = await request('/api/projects');
   assert.equal(response.status, 200);
   assert.equal(response.body.executionMode, 'project-aware');
-  assert.deepEqual(response.body.projects.map((project) => project.id), ['northline-goods', 'pilot-jsonplaceholder', 'pilot-the-internet', 'sample-api', 'sample-web', 'starter-api']);
-  assert.equal(response.body.projects[3].enabled, true);
-  assert.equal(response.body.projects[5].enabled, false);
-  assert.deepEqual(response.body.projects[3].environments, ['local', 'staging']);
-  assert.deepEqual(response.body.projects[3].environmentDetails.map(({ id, readOnly, remote }) => ({ id, readOnly, remote })), [
+  const byId = new Map(response.body.projects.map((project) => [project.id, project]));
+  for (const id of ['northline-goods', 'pilot-jsonplaceholder', 'pilot-the-internet', 'sample-api', 'sample-web', 'starter-api']) {
+    assert.ok(byId.has(id), `Bundled project '${id}' should exist`);
+  }
+  assert.equal(byId.get('sample-api').enabled, true);
+  assert.equal(byId.get('starter-api').enabled, false);
+  assert.deepEqual(byId.get('sample-api').environments, ['local', 'staging']);
+  assert.deepEqual(byId.get('sample-api').environmentDetails.map(({ id, readOnly, remote }) => ({ id, readOnly, remote })), [
     { id: 'local', readOnly: false, remote: false },
     { id: 'staging', readOnly: true, remote: false },
   ]);

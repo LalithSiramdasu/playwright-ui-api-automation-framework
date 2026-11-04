@@ -89,3 +89,10 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - Keep restricted tests under their respective `tests/safe/` trees. GET/HEAD only, no login posts, no destructive actions, no customer data, no load tests. The browser pilot uses `useReadOnlyOrigin`; the API uses `ReadOnlyApiClient`.
 - `staging` is the framework's restricted policy environment label, not a statement that those services provide private staging deployments.
 - Real user-owned project validation is not complete until an approved target, business requirements, actual execution evidence and CI/operations review are recorded.
+
+## Module 10 — new project onboarding
+
+- `scripts/onboard-project.mjs` is offline and preview-only unless `--write` is explicitly supplied. Keep new profiles disabled with read-only staging; never autogenerate a passing test or contact an arbitrary URL.
+- `src/core/onboarding-gate.cjs` is enforced by both runner preflight and Playwright configuration for newly scaffolded projects, but **a self-attested checklist is not proof of authorization**.
+- Onboard only authorized applications. Review and replace TODO tests, protect credentials and ensure no sensitive approval details are committed publicly.
+- Do not change or silently reset previous project histories or test cases while onboarding a new project.

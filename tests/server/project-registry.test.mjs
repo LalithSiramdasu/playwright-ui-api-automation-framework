@@ -24,13 +24,16 @@ const writeProfile = (root, dirName, profile) => {
 
 test('Module 1: bundled Northline and API-template profiles both validate', () => {
   const profiles = loadProjectRegistry();
-  assert.deepEqual(profiles.map((profile) => profile.id), ['northline-goods', 'pilot-jsonplaceholder', 'pilot-the-internet', 'sample-api', 'sample-web', 'starter-api']);
-  assert.equal(profiles[0].environments.local.webBaseUrl, 'http://127.0.0.1:4173/');
-  assert.equal(profiles[0].type, 'hybrid');
-  assert.equal(profiles[3].enabled, true);
-  assert.equal(profiles[3].type, 'api');
-  assert.equal(profiles[5].enabled, false);
-  assert.deepEqual(profiles[5].credentialEnv, { token: 'STARTER_API_TOKEN' });
+  const byId = new Map(profiles.map((profile) => [profile.id, profile]));
+  for (const id of ['northline-goods', 'pilot-jsonplaceholder', 'pilot-the-internet', 'sample-api', 'sample-web', 'starter-api']) {
+    assert.ok(byId.has(id), `Bundled project '${id}' should exist`);
+  }
+  assert.equal(byId.get('northline-goods').environments.local.webBaseUrl, 'http://127.0.0.1:4173/');
+  assert.equal(byId.get('northline-goods').type, 'hybrid');
+  assert.equal(byId.get('sample-api').enabled, true);
+  assert.equal(byId.get('sample-api').type, 'api');
+  assert.equal(byId.get('starter-api').enabled, false);
+  assert.deepEqual(byId.get('starter-api').credentialEnv, { token: 'STARTER_API_TOKEN' });
   assert.ok(SUPPORTED_SUITES.includes('api'));
 });
 

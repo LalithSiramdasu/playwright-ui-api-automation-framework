@@ -67,6 +67,14 @@
 - Dashboard lists both pilots but disables launch; only explicitly approved CLI executions can reach an external target. Scheduled and manual-dispatch CI remain local-only.
 - **Pending:** Actual Playwright evidence from the public endpoints and validation of a user-owned or explicitly authorized business application. No external requests are made during normal CI.
 
+## Module 10 milestone — real-project onboarding toolkit
+
+- Offline CLI scaffolds a disabled, read-only HTTPS staging profile for a website or REST API, an onboarding manifest, a requirements checklist and TODO-only safe tests. Preview by default, `--write` only with explicit opt-in, and no overwriting an existing project.
+- Static readiness audit checks host-specific authorization references, requirements/source/privacy review and replacement of placeholder tests.
+- CLI runner and Playwright config independently enforce that new scaffolded projects cannot run while draft or unreviewed. Earlier reference projects remain unchanged.
+- Existing registry/dashboard tests no longer require a hard-coded total of exactly six projects, so genuinely adding more projects does not break the automation framework itself.
+- **Remaining real-world milestone:** configure one user-owned or explicitly authorized project, author product-specific expected results, execute approved staging tests and archive genuine evidence. This cannot be truthfully marked complete without the target and permission.
+
 ## P1 — Reliability and coverage (next)
 
 | Work | Definition of done |

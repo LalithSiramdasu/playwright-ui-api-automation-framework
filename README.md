@@ -169,6 +169,10 @@ Two **public services intended for QA practice** now have fully separated projec
 
 Run `npm run pilots:validate` for an offline requirements-to-test traceability audit. See **[Module 9 pilot runbook](docs/REAL_PROJECT_PILOT.md)** for commands and limitations. An actual owner-authorized business-application validation is still required before claiming production readiness.
 
+## Module 10 — onboard an authorized project safely
+
+Run `npm run project:onboard -- --project client-catalog --name "Client Catalog QA" --type api --url https://staging.example.org/v1/` for a **preview** of a disabled staging profile and placeholder tests. Add `--write` only to create the starter files. No external requests are made by the scaffold. Run `npm run project:readiness -- --project client-catalog` to see why execution is still blocked until owner approval, reviewed functional tests, and privacy checks are complete. The Playwright runner enforces this gate for newly scaffolded projects. **No user-owned business pilot is claimed as verified yet.** See [Module 10 onboarding guide](docs/REAL_PROJECT_ONBOARDING.md).
+
 ## Useful test commands
 
 | Command | Purpose |

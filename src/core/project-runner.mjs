@@ -3,6 +3,7 @@ import { readdirSync, realpathSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getEnabledProject, loadProjectRegistry } from './project-registry.mjs';
+import { assertOnboardingReady } from './onboarding-gate.cjs';
 import { assessTargetPolicy } from './execution-policy.cjs';
 
 export const REPOSITORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
@@ -69,6 +70,9 @@ export function resolveProjectRun(input = {}, options = {}) {
     fail(`Unknown or missing environment '${String(environment)}' for '${project.id}'`);
   }
   const target = project.environments[environment];
+  // Newly onboarded targets cannot execute from a draft profile or TODO-only suite.
+  try { assertOnboardingReady(join(root, 'projects', project.id), project); }
+  catch (error) { fail(error.message); }
   let policy;
   try {
     policy = assessTargetPolicy(project, environment, {

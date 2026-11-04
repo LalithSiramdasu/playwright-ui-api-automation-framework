@@ -204,3 +204,18 @@ set QA_REMOTE_APPROVAL=
 # External pilot targets are never called by the standard CI pipeline or dashboard Run button.
 # These commands use public QA sandbox hosts, not private customer/project applications.
 # For a real owned app, follow docs/REAL_PROJECT_PILOT.md and obtain explicit authorization.
+
+
+============================================================
+MODULE 10: ONBOARD A NEW AUTHORIZED PROJECT (WINDOWS CMD)
+============================================================
+REM Run each command on a separate line. These example URLs are placeholders; do not test without authorization.
+REM Preview only, no files or network traffic:
+npm run project:onboard -- --project client-catalog --name "Client Catalog QA" --type api --url https://staging.example.org/v1/
+REM Create DISABLED test project files after reviewing the example:
+npm run project:onboard -- --project client-catalog --name "Client Catalog QA" --type api --url https://staging.example.org/v1/ --write
+npm run projects:validate
+REM This FAILS until approved and real safe tests are written; that's expected:
+npm run project:readiness -- --project client-catalog
+REM Before a genuine approved staging run, set exact hostname and review all tests.
+REM See docs/REAL_PROJECT_ONBOARDING.md for the remaining manual authorization steps.

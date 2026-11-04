@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import { assessTargetPolicy } from './src/core/execution-policy.cjs';
+import { assertOnboardingReady } from './src/core/onboarding-gate.cjs';
 
 /** The Playwright TS loader may run as CommonJS; profile data is read here, while CLI/dashboard use shared preflight. */
 function projectFromEnvironment() {
@@ -19,6 +20,8 @@ function projectFromEnvironment() {
     throw Error(`Unsupported environment for project '${id}'`);
   }
   const target = profile.environments[environment];
+  // Re-check onboarding even when Playwright is invoked directly (without CLI preflight).
+  assertOnboardingReady(join(process.cwd(), 'projects', id), profile);
   const policy = assessTargetPolicy(profile, environment, { remoteOptIn: process.env.QA_ALLOW_REMOTE === '1' });
   const suite = process.env.QA_SUITE ?? 'all';
   const browser = process.env.QA_BROWSER ?? 'all';

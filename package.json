@@ -35,7 +35,9 @@
     "sample-web:start": "node projects/sample-web/server.mjs",
     "test:sample-web": "node scripts/run-project.mjs --project sample-web --environment local --suite all",
     "test:sample-api-staging": "node scripts/run-project.mjs --project sample-api --environment staging --suite api",
-    "pilots:validate": "node scripts/pilot-audit.mjs"
+    "pilots:validate": "node scripts/pilot-audit.mjs",
+    "project:onboard": "node scripts/onboard-project.mjs",
+    "project:readiness": "node scripts/project-readiness.mjs"
   },
   "engines": {
     "node": ">=20"

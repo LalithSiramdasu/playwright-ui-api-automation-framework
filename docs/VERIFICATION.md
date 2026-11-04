@@ -102,3 +102,19 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - `npm run projects:validate` and `npm run pilots:validate` pass locally. `node --test tests/server/*.test.mjs`: 86 passing after Module 9 changes.
 - `--allow-remote --dry-run` passed for both approved hosts, with exact matching `QA_REMOTE_APPROVAL`; no external requests were made by these checks.
 - Full lint, TypeScript, dashboard and existing Playwright regression must be verified on Module 9's own GitHub Actions commit. **The new external tests are NOT run in CI by design**. Live public-sandbox tests and a genuine user-owned/authorized project pilot still require separately captured run evidence.
+
+## Module 10 — offline onboarding (local verification, before CI)
+
+- New offline staging project scaffold and readiness gate added; project profiles default to disabled with TODO-only tests.
+- Existing Northline, Sample Website, Sample API and public practice pilots are unchanged. No external HTTP traffic is initiated by the new module.
+- Local Node standalone verification results and current commit-specific CI evidence must be recorded after running the module's release checks; older green runs do not verify Module 10.
+- Actual business-app validation cannot be claimed until an explicitly authorized real project and meaningful functional assertions are supplied and executed.
+
+## Module 10 local verification — 2026-11-04
+
+- `npm run test:server`: **98 passed, 0 failed** with six built-in profiles.
+- Temporary seventh web project created via the `--write` path; `npm run projects:validate` accepted **7 project profiles** and `npm run test:server` still passed **98/98**, proving additions no longer break hard-coded project counts. The temporary project was deleted after testing.
+- `npm run pilots:validate`: existing two public practice pilots still pass offline static audits.
+- `node --check` on new onboarding/CLI modules: passed.
+- Actual external requests performed by Module 10: **none**. No real business target was supplied.
+- React build, TypeScript, ESLint and full Playwright tests: **require confirmation from the Module 10 commit's own GitHub Actions run**; older green runs do not verify this release.
