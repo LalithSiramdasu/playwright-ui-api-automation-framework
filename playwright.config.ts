@@ -1,17 +1,49 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import { assessTargetPolicy } from './src/core/execution-policy.cjs';
-import { resolveProjectRun } from './src/core/project-runner.mjs';
 
-// Legacy `npm test` runs the Northline reference suite as before.
-// Module 2 sets QA_PROJECT_ID through the allowlisted project runner to isolate tests.
-const selection = process.env.QA_PROJECT_ID
-  ? resolveProjectRun({
-      projectId: process.env.QA_PROJECT_ID,
-      environment: process.env.QA_ENVIRONMENT,
-      suite: process.env.QA_SUITE,
-      browser: process.env.QA_BROWSER,
-    })
-  : null;
+/**
+ * The Playwright TypeScript config loader sometimes runs under CommonJS.
+ * Read validated data-only JSON here rather than importing the Node ESM
+ * preflight module (which uses import.meta for safe path resolution).
+ * Dashboard and CLI already call resolveProjectRun before launching Playwright.
+ */
+function projectFromEnvironment() {
+  const id = process.env.QA_PROJECT_ID;
+  if (!id) return null;
+  if (!/^[a-z][a-z0-9-]{2,39}$/.test(id)) throw Error('Invalid QA_PROJECT_ID');
+  const profileFile = join(process.cwd(), 'projects', id, 'project.config.json');
+  const profile = JSON.parse(readFileSync(profileFile, 'utf8'));
+  if (profile.id !== id || profile.enabled !== true || !['web', 'api', 'hybrid'].includes(profile.type)) {
+    throw Error(`Invalid or disabled project '${id}'`);
+  }
+  const environments = Object.keys(profile.environments ?? {});
+  const environment = process.env.QA_ENVIRONMENT ?? (environments.length === 1 ? environments[0] : undefined);
+  if (!environment || !Object.prototype.hasOwnProperty.call(profile.environments, environment)) {
+    throw Error(`Unsupported environment for project '${id}'`);
+  }
+  const target = profile.environments[environment];
+  const policy = assessTargetPolicy(profile, environment, {
+    remoteOptIn: process.env.QA_ALLOW_REMOTE === '1',
+  });
+  const suite = process.env.QA_SUITE ?? 'all';
+  const browser = process.env.QA_BROWSER ?? 'all';
+  if (suite !== 'all' && !profile.suites?.includes(suite)) throw Error('Unsupported suite for this project');
+  if (!['all', 'chromium', 'firefox', 'webkit'].includes(browser)) throw Error('Unsupported browser');
+  if ((profile.type === 'api' || suite === 'api') && browser !== 'all') throw Error('API suites cannot select a browser');
+  return {
+    projectId: id,
+    projectType: profile.type as 'web' | 'api' | 'hybrid',
+    environment,
+    webBaseUrl: target.webBaseUrl as string | undefined,
+    apiBaseUrl: target.apiBaseUrl as string | undefined,
+    testDir: policy.restricted ? `./projects/${id}/tests/safe` : id === 'northline-goods' ? './tests' : `./projects/${id}/tests`,
+    remote: policy.remote,
+  };
+}
+
+const selection = projectFromEnvironment();
 const defaultBase = process.env.BASE_URL ?? 'http://127.0.0.1:4173';
 const uiBase = selection?.webBaseUrl ?? defaultBase;
 const apiBase = selection?.apiBaseUrl ?? defaultBase;
@@ -21,6 +53,7 @@ const reportPrefix = selection ? `${selection.projectId}/${selection.environment
 const localServers: Record<string, { command: string; url: string }> = {
   'northline-goods': { command: 'npm run demo:start', url: 'http://127.0.0.1:4173/health' },
   'sample-api': { command: 'node projects/sample-api/server.mjs', url: 'http://127.0.0.1:4174/health' },
+  'sample-web': { command: 'node projects/sample-web/server.mjs', url: 'http://127.0.0.1:4175/health' },
 };
 const webServer = selection
   ? !selection.remote ? localServers[selection.projectId] : undefined
@@ -46,7 +79,7 @@ export default defineConfig({
   ],
   outputDir: reportPrefix ? `test-results/${reportPrefix}` : 'test-results',
   use: {
-    // Remote staging may carry credentials in network traces or screenshots.
+    // Remote staging may contain credentials; avoid recording browser artifacts there.
     trace: selection?.remote ? 'off' : 'on-first-retry',
     screenshot: selection?.remote ? 'off' : 'only-on-failure',
     video: selection?.remote ? 'off' : 'retain-on-failure',
