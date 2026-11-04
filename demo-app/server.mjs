@@ -9,9 +9,9 @@ const publicDir = join(here, 'public');
 const port = Number(process.env.PORT ?? 4173);
 
 const products = Object.freeze([
-  { id: 101, name: 'Wireless Mouse', category: 'Electronics', priceCents: 2599 },
-  { id: 102, name: 'Notebook', category: 'Stationery', priceCents: 899 },
-  { id: 103, name: 'Water Bottle', category: 'Lifestyle', priceCents: 1599 },
+  { id: 101, name: 'Wireless Mouse', category: 'Electronics', pricePaise: 259900 },
+  { id: 102, name: 'Notebook', category: 'Stationery', pricePaise: 89900 },
+  { id: 103, name: 'Water Bottle', category: 'Lifestyle', pricePaise: 159900 },
 ]);
 const tokens = new Set();
 const sendJson = (res, status, value) => {
@@ -84,12 +84,12 @@ const server = createServer(async (req, res) => {
       ) {
         return sendJson(res, 400, { error: 'Invalid order items' });
       }
-      const totalCents = order.items.reduce(
+      const totalPaise = order.items.reduce(
         (sum, item) =>
-          sum + products.find((product) => product.id === item.productId).priceCents * item.quantity,
+          sum + products.find((product) => product.id === item.productId).pricePaise * item.quantity,
         0,
       );
-      return sendJson(res, 201, { id: randomUUID(), status: 'confirmed', totalCents });
+      return sendJson(res, 201, { id: randomUUID(), status: 'confirmed', totalPaise });
     }
     if (req.method === 'GET' && ['/', '/index.html', '/app.js', '/styles.css'].includes(url.pathname)) {
       const path = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);

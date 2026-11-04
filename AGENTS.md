@@ -17,7 +17,8 @@ This is a learning-focused, local QA automation framework. Treat its frontend as
 - Cards: `data-testid="product-card"` and `Add to cart` button; cart totals: `data-testid="cart-count"` and `data-testid="cart-total"`.
 - Checkout: `Place order` button and an accessible `role="status"` confirmation beginning with `Order confirmed`.
 - API endpoints and seeded product IDs/prices stay stable unless tests and documentation are updated together.
-- Every fixture in Experience lab uses `data-testid="state-view"` plus a `data-state` identifier, and has a meaningful recovery action.
+- The ten UX states must remain **integrated into real shopping flows**. Do not reintroduce an Experience Lab, demo-state gallery, fake status counts, or buttons that only simulate success.
+- Keep UI prices in INR and store/order API prices in integer paise (`pricePaise`, `totalPaise`). Changes to these contracts must update UI, API, test data, and assertions together.
 
 ## Design references
 

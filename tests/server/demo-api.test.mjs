@@ -74,7 +74,7 @@ test('authorized checkout returns computed amount and rejects invalid orders', a
   }, headers);
   assert.equal(order.status, 201);
   assert.equal(order.body.status, 'confirmed');
-  assert.equal(order.body.totalCents, 6097);
+  assert.equal(order.body.totalPaise, 609700);
   const invalid = await post('/api/orders', { items: [{ productId: 101, quantity: -2 }] }, headers);
   assert.equal(invalid.status, 400);
 });

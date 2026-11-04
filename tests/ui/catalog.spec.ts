@@ -35,7 +35,7 @@ test.describe('UI | Products and cart', () => {
     await storePage.addProduct('Wireless Mouse');
     await storePage.addProduct('Notebook');
     await expect(storePage.cartCount).toHaveText('2');
-    await expect(storePage.cartTotal).toHaveText('$34.98');
+    await expect(storePage.cartTotal).toHaveText('₹3,498');
   });
 
   test('checkout confirms an order and empties cart @smoke @regression', async ({ storePage }) => {
@@ -43,6 +43,6 @@ test.describe('UI | Products and cart', () => {
     await storePage.placeOrder();
     await expect(storePage.confirmation).toContainText('Order confirmed');
     await expect(storePage.cartCount).toHaveText('0');
-    await expect(storePage.cartTotal).toHaveText('$0.00');
+    await expect(storePage.cartTotal).toHaveText('₹0');
   });
 });

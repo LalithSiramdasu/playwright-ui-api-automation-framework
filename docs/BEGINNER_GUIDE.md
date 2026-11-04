@@ -56,7 +56,7 @@ Example: `authorized order has calculated total`.
 1. `shopApi.login()` sends `POST /api/auth/login` with fake credentials.
 2. The response is checked for HTTP `200` and a bearer token.
 3. `shopApi.createOrder()` sends two products and the token.
-4. The test expects HTTP `201`, `status: confirmed`, and `totalCents: 6097`.
+4. The test expects HTTP `201`, `status: confirmed`, and `totalPaise: 609700`.
 5. A bad request, authorization failure, or calculation mismatch fails the test.
 
 **Why two types?** API tests isolate backend behavior and run quickly. UI tests verify the full user experience in a browser. Both are needed because a valid API does not guarantee a working interface.

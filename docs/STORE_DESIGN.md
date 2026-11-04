@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Good Form is a **local testing fixture** for the Playwright UI/API framework, not a production shop or a simulated commercial success story. The application includes a real Node API, deliberate error handling, and a separate **Experience lab** with predictable UI-state fixtures.
+Good Form is a **local testing fixture** for the Playwright UI/API framework, not a production shop or a simulated commercial success story. The application includes a local Node API and real workflow-level loading, empty, failure and recovery behavior. The UX states are not a separate test gallery.
 
 ## Visual direction
 
@@ -29,33 +29,42 @@ The user-supplied image listed six public GitHub repositories containing UI desi
 
 No third-party skill scripts or dependencies are required to run Good Form; the project is intentionally standalone.
 
-## Ten states
+## Ten integrated shopping states
 
-The supplied reference video identified the following states. All **10** are selectable from **Experience lab** after sign-in and covered by `tests/ui/states.spec.ts`. They are explicitly **controlled fixtures**; the preview does not pretend to make ten real backend failures happen.
+The ten interaction conditions from the supplied reference are now implemented in the real storefront. There is **no separate gallery**. Playwright exercises unusual conditions with browser networking, request interception, or denied clipboard permissions; the ordinary visitor sees them only when those conditions apply.
 
-| # | Fixture | Behavior / recovery |
-| --- | --- | --- |
-| 1 | Empty | Meaningful empty view; navigate to the collection; also occurs for an empty cart |
-| 2 | Loading | Content-shaped skeleton placeholders, without unexplained layout jumps |
-| 3 | Error | Specific request failure and retry that calls the real catalog API |
-| 4 | No internet | Clear reconnection advice; retry checks real `navigator.onLine` |
-| 5 | Slow network | Illustrative progress bar and continue action |
-| 6 | No search results | Search guidance and filter reset; also reachable via real search |
-| 7 | Permission denied | Permission message and an actual file-input fallback (no upload) |
-| 8 | Session expired | Return to sign-in; real checkout 401 is also handled |
-| 9 | Form validation | Field-specific example; real login uses HTML email and required validation |
-| 10 | Success | Confirmation and next step; real checkout gives an actual order ID |
+| # | User-facing condition | Actual behavior | Automated check |
+| --- | --- | --- | --- |
+| 1 | Empty cart | Cart explains it is empty and focuses search from its browse action | Cart empty + focus |
+| 2 | Loading | Catalog shows content-shaped skeletons while the HTTP request is pending | Delayed catalog request |
+| 3 | Error | Failed catalog GET shows a specific message, retains filters/cart and offers a functioning retry | HTTP 503 then successful retry |
+| 4 | Offline | Network event shows a persistent connectivity notice, which disappears after reconnection | `context.setOffline()` |
+| 5 | Slow network | A waiting notice appears only after a real request delay; it disappears when finished | Delayed GET longer than threshold |
+| 6 | No results | No matching catalog items triggers empty-search guidance with working Clear filters action | Unmatched product search |
+| 7 | Permission denied | When copying a real order reference is blocked, a selectable manual-copy field appears | Rejected Clipboard API |
+| 8 | Session expired | Checkout HTTP 401 sends the user back to sign-in; items are restored after reauthentication | Injected order 401 |
+| 9 | Form validation | Required and malformed email inputs show field-specific guidance and `aria-invalid` feedback | Invalid sign-in fields |
+| 10 | Success | A confirmed API checkout shows the real order reference, a copy action and a cleared cart | Successful checkout |
 
-**Integration coverage:** the baseline login/search/cart/checkout tests remain unchanged. Additional tests cover all ten preview states, the session recovery action, a real empty search, and an injected checkout `503` failure that must preserve cart items.
+There is also an explicit checkout HTTP 503 test ensuring the cart is preserved and an inline error is shown. Product prices are displayed in **INR** using `Intl.NumberFormat('en-IN')`; the API stores integer **paise** to avoid floating-point rounding issues. Seeded objects retain their numeric product IDs and test-safe fake account.
 
-## Run locally
+## Verification and limitations
+
+From the repository root:
 
 ```bash
-npm install
-npx playwright install
-npm run demo:start
+npm run test:server
+npm run typecheck
+npm run lint
+npm test
 ```
 
-Open `http://127.0.0.1:4173`, sign in with the README's fake credentials, then open **Experience lab**. The lab requires no database and no third-party services. Run `npx playwright test tests/ui/states.spec.ts --project=chromium` to exercise its fixtures.
+For just the real shopping-state scenarios:
+
+```bash
+npx playwright test tests/ui/states.spec.ts --project=chromium
+```
+
+No external stock assets, real payment processor, persistent customer database or production login system are used. The app is a controlled QA test target, not a commercial storefront. Public GitHub Actions is the release gate for complete Chromium, Firefox, WebKit and API verification.
 
 The chosen palette is an interpretation of the user-provided video, not an endorsement or affiliation with its creator. No assets from the videos were redistributed or embedded in this repository.

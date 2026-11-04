@@ -21,7 +21,7 @@ Bundled fake-customer **QA Demo Shop** web application and its API. All credenti
 | UI-04 | Catalog | Initial inventory | Three products shown | `tests/ui/catalog.spec.ts` | UI, smoke |
 | UI-05 | Search | Parameterized inputs | Matching product only | `tests/ui/catalog.spec.ts` | UI, data-driven |
 | UI-06 | Category | Stationery filter | Notebook shown | `tests/ui/catalog.spec.ts` | UI, functional |
-| UI-07 | Cart | Two items added | Two items; total $34.98 | `tests/ui/catalog.spec.ts` | UI, functional |
+| UI-07 | Cart | Two items added | Two items; total ₹3,498 | `tests/ui/catalog.spec.ts` | UI, functional |
 | UI-08 | Checkout | Place an order | Confirmation and empty cart | `tests/ui/catalog.spec.ts` | UI, smoke, end-to-end |
 | UI-09 | Accessibility | Keyboard tabbing | Focus follows email → password → button | `tests/ui/accessibility.spec.ts` | Basic accessibility |
 | UI-10 | Responsive | Mobile viewport | Catalog and cart remain usable | `tests/ui/accessibility.spec.ts` | Responsive |
@@ -32,7 +32,7 @@ Bundled fake-customer **QA Demo Shop** web application and its API. All credenti
 | API-05 | Products | Filter by category | One matching item | `tests/api/products.spec.ts` | API, functional |
 | API-06 | Products | Nonexistent search | Empty results | `tests/api/products.spec.ts` | API, negative/edge |
 | API-07 | Orders | Missing authorization | HTTP 401 | `tests/api/orders.spec.ts` | API, negative |
-| API-08 | Orders | Authorized order | HTTP 201 + $60.97 total | `tests/api/orders.spec.ts` | API, smoke |
+| API-08 | Orders | Authorized order | HTTP 201 + ₹6,097 total (609700 paise) | `tests/api/orders.spec.ts` | API, smoke |
 | API-09 | Orders | Invalid quantity | HTTP 400 | `tests/api/orders.spec.ts` | API, negative |
 | IN-01 | Backend | Health / catalog / auth / orders / malformed JSON | Expected statuses and data | `tests/server/demo-api.test.mjs` | Node API integration |
 

@@ -9,7 +9,7 @@ export const invalidUser = {
 } as const;
 
 export const expectedCatalog = [
-  { id: 101, name: 'Wireless Mouse', category: 'Electronics', priceCents: 2599 },
-  { id: 102, name: 'Notebook', category: 'Stationery', priceCents: 899 },
-  { id: 103, name: 'Water Bottle', category: 'Lifestyle', priceCents: 1599 },
+  { id: 101, name: 'Wireless Mouse', category: 'Electronics', pricePaise: 259900 },
+  { id: 102, name: 'Notebook', category: 'Stationery', pricePaise: 89900 },
+  { id: 103, name: 'Water Bottle', category: 'Lifestyle', pricePaise: 159900 },
 ] as const;

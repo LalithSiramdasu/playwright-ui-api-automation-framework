@@ -1,32 +1,28 @@
-/** GOOD FORM: a small, intentionally deterministic storefront for UI/API automation. */
+/** GOOD FORM — real UX states integrated into the shopping journey. */
 const $ = (id) => document.getElementById(id);
 const loginScreen = $('login-screen');
 const shopScreen = $('shop-screen');
 const productsRoot = $('products');
 const cartItemsRoot = $('cart-items');
-const shopContent = $('shop-content');
-const statesContent = $('states-content');
-const stateOptions = $('state-options');
-const statePreview = $('state-preview');
 const loginError = $('login-error');
 const orderStatus = $('order-status');
-const money = (cents) => `$${(cents / 100).toFixed(2)}`;
+const catalogFeedback = $('catalog-feedback');
+const slowNotice = $('slow-notice');
+const networkBanner = $('network-banner');
+const refreshButton = $('refresh-products');
+const confirmation = $('order-confirmation');
+const formatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+});
+const money = (paise) => formatter.format(paise / 100);
 const cart = new Map();
 let token = '';
 let products = [];
-
-const scenarios = [
-  { id: 'empty', label: 'Empty state', eyebrow: '01 / EMPTY', glyph: '○', title: 'Nothing here. Yet.', detail: 'An empty bag should offer direction instead of leaving someone at a dead end.', action: 'Browse the collection', note: 'A real empty cart is also available in the shop.' },
-  { id: 'loading', label: 'Loading state', eyebrow: '02 / LOADING', glyph: '◌', title: 'Curating your collection.', detail: 'Content-shaped placeholders communicate progress without shifting the layout.', action: 'Return to collection', note: 'The storefront also handles actual request loading.' },
-  { id: 'error', label: 'Error state', eyebrow: '03 / REQUEST FAILED', glyph: '!', title: 'This request didn’t complete.', detail: 'We couldn’t load the latest products. Your selection has not been changed.', action: 'Retry catalog request', note: 'Checkout failures also receive a specific inline message.' },
-  { id: 'offline', label: 'No internet', eyebrow: '04 / CONNECTION LOST', glyph: '⌁', title: 'You appear to be offline.', detail: 'Check your connection and try again. Your local cart will remain as it is.', action: 'Check connection', note: 'This preview simulates offline; real network errors are handled separately.' },
-  { id: 'slow', label: 'Slow network', eyebrow: '05 / SLOW NETWORK', glyph: '↗', title: 'Still working on it.', detail: 'A slower response deserves honest progress and reassurance, not an endless spinner.', action: 'Continue browsing', note: 'The progress indicator illustrates a delayed request.' },
-  { id: 'no-results', label: 'No search results', eyebrow: '06 / NO RESULTS', glyph: '⌕', title: 'No matches this time.', detail: 'Try a shorter search or remove the category filter to see the full collection.', action: 'Clear filters', note: 'Search “does-not-exist” in the shop for the real state.' },
-  { id: 'permission', label: 'Permission denied', eyebrow: '07 / CAMERA BLOCKED', glyph: '⊘', title: 'Camera access is off.', detail: 'Your browser has not granted camera access. You can continue without it using a file instead.', action: 'Choose a file instead', note: 'This is a controlled permission-denied fixture.' },
-  { id: 'session', label: 'Session expired', eyebrow: '08 / SESSION EXPIRED', glyph: '↻', title: 'Time to sign in again.', detail: 'Your session ended to keep the account safe. Sign in to pick up where you left off.', action: 'Sign in again', note: 'The app also handles a real unauthorized checkout response.' },
-  { id: 'validation', label: 'Form validation', eyebrow: '09 / VALIDATION', glyph: '!', title: 'One detail needs attention.', detail: 'Explain exactly which field needs changing, then keep the rest of the form intact.', action: 'Review sign-in form', note: 'Real sign-in fields use required and email validation.' },
-  { id: 'success', label: 'Success state', eyebrow: '10 / COMPLETE', glyph: '✓', title: 'Order confirmed.', detail: 'Give clear confirmation and an obvious next step when an action finishes successfully.', action: 'Continue shopping', note: 'Complete a real checkout to get an order reference.' },
-];
+let orderReference = '';
+let catalogLoading = false;
 
 async function api(path, options = {}) {
   try {
@@ -47,7 +43,7 @@ async function api(path, options = {}) {
     return data;
   } catch (error) {
     if (error instanceof TypeError || !navigator.onLine) {
-      const offline = new Error('You seem to be offline. Check your connection and try again.');
+      const offline = new Error('Connection unavailable. Check your network and try again.');
       offline.status = 0;
       throw offline;
     }
@@ -56,14 +52,19 @@ async function api(path, options = {}) {
 }
 
 function textElement(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  node.textContent = text;
-  return node;
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  element.textContent = text;
+  return element;
+}
+
+function syncNetworkBanner() {
+  networkBanner.hidden = navigator.onLine;
 }
 
 function showCatalogLoading() {
   productsRoot.replaceChildren();
+  $('result-count').textContent = 'LOADING COLLECTION';
   for (let i = 0; i < 3; i += 1) {
     const skeleton = textElement('div', 'skeleton-row', '');
     skeleton.setAttribute('aria-hidden', 'true');
@@ -75,6 +76,12 @@ function showCatalogLoading() {
   }
 }
 
+function resetFilters() {
+  $('search').value = '';
+  $('category').value = '';
+  renderProducts();
+}
+
 function renderProducts() {
   productsRoot.replaceChildren();
   const search = $('search').value.trim().toLowerCase();
@@ -84,7 +91,7 @@ function renderProducts() {
   );
   $('result-count').textContent = `${String(visible.length).padStart(2, '0')} PIECE${visible.length === 1 ? '' : 'S'} IN VIEW`;
 
-  visible.forEach((product) => {
+  for (const product of visible) {
     const article = textElement('article', 'product', '');
     article.dataset.testid = 'product-card';
     const visualName = { 101: 'mouse', 102: 'notebook', 103: 'bottle' }[product.id] || 'mouse';
@@ -98,20 +105,23 @@ function renderProducts() {
     const detail = { 101: 'A quieter way to work.', 102: 'A place for the next idea.', 103: 'Made for the everyday carry.' }[product.id] || 'A considered essential.';
     info.append(textElement('p', 'product-details', detail));
     const bottom = textElement('div', 'product-bottom', '');
-    bottom.append(textElement('strong', 'product-price', money(product.priceCents)));
+    bottom.append(textElement('strong', 'product-price', money(product.pricePaise)));
     const addButton = textElement('button', 'add-to-cart', 'Add to cart');
     addButton.type = 'button';
     addButton.addEventListener('click', () => {
       cart.set(product.id, (cart.get(product.id) || 0) + 1);
       orderStatus.textContent = '';
       orderStatus.classList.remove('is-error');
+      confirmation.hidden = true;
+      $('copy-feedback').textContent = '';
+      $('reference-fallback').hidden = true;
       renderCart();
     });
     bottom.append(addButton);
     info.append(bottom);
     article.append(art, info);
     productsRoot.append(article);
-  });
+  }
 
   if (visible.length === 0) {
     const empty = textElement('div', 'catalog-empty', '');
@@ -134,10 +144,10 @@ function renderCart() {
     const product = products.find((entry) => entry.id === id);
     if (!product) continue;
     count += quantity;
-    total += product.priceCents * quantity;
+    total += product.pricePaise * quantity;
     const item = textElement('li', '', '');
     item.append(textElement('span', '', `${product.name} × ${quantity}`));
-    item.append(textElement('strong', '', money(product.priceCents * quantity)));
+    item.append(textElement('strong', '', money(product.pricePaise * quantity)));
     cartItemsRoot.append(item);
   }
   document.querySelector('[data-testid="cart-count"]').textContent = String(count);
@@ -146,122 +156,72 @@ function renderCart() {
   $('place-order').disabled = count === 0;
 }
 
-function resetFilters() {
-  $('search').value = '';
-  $('category').value = '';
-  renderProducts();
+function showCatalogError(error) {
+  productsRoot.replaceChildren();
+  $('result-count').textContent = 'COLLECTION UNAVAILABLE';
+  catalogFeedback.replaceChildren();
+  catalogFeedback.hidden = false;
+  const heading = textElement('strong', '', error.status === 0 ? 'You appear to be offline.' : 'The collection could not be loaded.');
+  const explanation = textElement('p', '', 'Your cart and filters have been kept. Try loading the products again.');
+  const retry = textElement('button', 'retry-button', 'Retry loading products');
+  retry.type = 'button';
+  retry.addEventListener('click', loadCatalog);
+  catalogFeedback.append(heading, explanation, retry);
+  syncNetworkBanner();
 }
 
-function showSection(which) {
-  const lab = which === 'states';
-  shopContent.hidden = lab;
-  statesContent.hidden = !lab;
-  $('nav-shop').classList.toggle('is-active', !lab);
-  $('nav-states').classList.toggle('is-active', lab);
-  $('nav-shop').setAttribute('aria-pressed', String(!lab));
-  $('nav-states').setAttribute('aria-pressed', String(lab));
+async function loadCatalog() {
+  if (catalogLoading) return;
+  catalogLoading = true;
+  refreshButton.disabled = true;
+  slowNotice.hidden = true;
+  catalogFeedback.hidden = true;
+  showCatalogLoading();
+  // Only show a slow-connection message after a genuinely delayed response.
+  const slowTimer = setTimeout(() => { slowNotice.hidden = false; }, 700);
+  try {
+    products = (await api('/api/products')).products;
+    renderProducts();
+    renderCart();
+  } catch (error) {
+    showCatalogError(error);
+  } finally {
+    clearTimeout(slowTimer);
+    slowNotice.hidden = true;
+    refreshButton.disabled = false;
+    catalogLoading = false;
+  }
 }
 
-function signOut(reason = '') {
+function signOut(reason = '', preserveCart = false) {
   token = '';
-  cart.clear();
+  if (!preserveCart) cart.clear();
   products = [];
   shopScreen.hidden = true;
   loginScreen.hidden = false;
   $('password').value = '';
   orderStatus.textContent = '';
-  showSection('shop');
+  confirmation.hidden = true;
   loginError.hidden = !reason;
   loginError.textContent = reason;
 }
 
-function createSpecimen(id) {
-  const spec = scenarios.find((item) => item.id === id);
-  if (!spec) return;
-  statePreview.replaceChildren();
-  const view = textElement('section', 'state-view', '');
-  view.dataset.testid = 'state-view';
-  view.dataset.state = spec.id;
-  view.append(textElement('div', 'state-glyph', spec.glyph));
-  view.append(textElement('span', 'state-index', spec.eyebrow));
-  view.append(textElement('h4', '', spec.title));
-  view.append(textElement('p', '', spec.detail));
-
-  if (id === 'loading') {
-    const skeleton = textElement('div', 'skeleton-row', '');
-    skeleton.setAttribute('aria-label', 'Loading placeholder');
-    skeleton.append(textElement('div', 'skeleton-media', ''));
-    const lines = textElement('div', 'skeleton-lines', '');
-    lines.append(textElement('span', '', ''), textElement('span', '', ''));
-    skeleton.append(lines);
-    view.append(skeleton);
-  }
-  if (id === 'slow') {
-    const progress = textElement('div', 'progress-track', '');
-    const fill = textElement('div', 'progress-fill', '');
-    progress.append(fill);
-    progress.setAttribute('aria-label', 'Simulated slow connection progress');
-    view.append(progress);
-  }
-  if (id === 'validation') {
-    const sample = textElement('div', 'validation-sample', 'Email address: name@');
-    sample.append(textElement('span', '', 'Enter a complete email address.'));
-    view.append(sample);
-  }
-  const action = textElement('button', `state-action${id === 'error' ? ' state-error-action' : ''}`, spec.action);
-  action.type = 'button';
-  action.addEventListener('click', async () => {
-    if (id === 'session' || id === 'validation') {
-      signOut(id === 'session' ? 'Your session expired. Sign in again to continue.' : 'Review your email address and password.');
-      $('email').focus();
-    } else if (id === 'permission') {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.addEventListener('change', () => {
-        if (input.files?.length) {
-          view.querySelector('.state-support').textContent = `File selected: ${input.files[0].name}. No file is uploaded.`;
-        }
-      });
-      input.click();
-    } else if (id === 'offline' && !navigator.onLine) {
-      view.querySelector('.state-support').textContent = 'Still offline. Reconnect and try again.';
-    } else if (id === 'error') {
-      showSection('shop');
-      showCatalogLoading();
-      try {
-        products = (await api('/api/products')).products;
-        renderProducts();
-        renderCart();
-      } catch {
-        productsRoot.replaceChildren(textElement('p', 'form-error', 'Could not load products. Check your connection and retry.'));
-      }
-    } else {
-      if (id === 'no-results') resetFilters();
-      showSection('shop');
-    }
-  });
-  view.append(action);
-  view.append(textElement('small', 'state-support', spec.note));
-  statePreview.append(view);
-  stateOptions.querySelectorAll('button').forEach((button) => {
-    const selected = button.dataset.scenario === id;
-    button.classList.toggle('is-selected', selected);
-    button.setAttribute('aria-pressed', String(selected));
-  });
+function updateFieldValidity(field) {
+  const message = $(`${field.id}-field-error`);
+  let feedback = '';
+  if (field.validity.valueMissing) feedback = `${field.id === 'email' ? 'Email address' : 'Password'} is required.`;
+  else if (field.validity.typeMismatch) feedback = 'Enter a complete email address.';
+  message.textContent = feedback;
+  message.hidden = !feedback;
+  field.setAttribute('aria-invalid', String(Boolean(feedback)));
 }
 
-function initScenarios() {
-  scenarios.forEach((spec, index) => {
-    const button = textElement('button', 'state-option', '');
-    button.type = 'button';
-    button.dataset.scenario = spec.id;
-    button.setAttribute('aria-label', spec.label);
-    button.setAttribute('aria-pressed', 'false');
-    button.append(textElement('span', '', String(index + 1).padStart(2, '0')));
-    button.append(document.createTextNode(spec.label));
-    button.addEventListener('click', () => createSpecimen(spec.id));
-    stateOptions.append(button);
+for (const id of ['email', 'password']) {
+  const field = $(id);
+  field.addEventListener('invalid', () => updateFieldValidity(field));
+  field.addEventListener('input', () => {
+    updateFieldValidity(field);
+    loginError.hidden = true;
   });
 }
 
@@ -277,12 +237,9 @@ $('login-form').addEventListener('submit', async (event) => {
       body: JSON.stringify({ email: $('email').value, password: $('password').value }),
     });
     token = auth.token;
-    products = (await api('/api/products')).products;
     loginScreen.hidden = true;
     shopScreen.hidden = false;
-    showSection('shop');
-    renderProducts();
-    renderCart();
+    await loadCatalog();
   } catch (error) {
     token = '';
     loginError.textContent = error.message;
@@ -293,37 +250,67 @@ $('login-form').addEventListener('submit', async (event) => {
   }
 });
 
-$('email').addEventListener('input', () => { loginError.hidden = true; });
-$('password').addEventListener('input', () => { loginError.hidden = true; });
 $('logout').addEventListener('click', () => signOut());
-$('nav-shop').addEventListener('click', () => showSection('shop'));
-$('nav-states').addEventListener('click', () => showSection('states'));
 $('browse-catalog').addEventListener('click', () => $('search').focus());
-$('search').addEventListener('input', renderProducts);
-$('category').addEventListener('change', renderProducts);
+$('search').addEventListener('input', () => { if (!catalogLoading && catalogFeedback.hidden) renderProducts(); });
+$('category').addEventListener('change', () => { if (!catalogLoading && catalogFeedback.hidden) renderProducts(); });
+refreshButton.addEventListener('click', loadCatalog);
+$('retry-connection').addEventListener('click', () => {
+  syncNetworkBanner();
+  if (navigator.onLine && !shopScreen.hidden) loadCatalog();
+});
+window.addEventListener('online', syncNetworkBanner);
+window.addEventListener('offline', syncNetworkBanner);
+syncNetworkBanner();
 
 $('place-order').addEventListener('click', async () => {
   const button = $('place-order');
   const items = [...cart].map(([productId, quantity]) => ({ productId, quantity }));
+  if (!items.length) return;
   button.disabled = true;
   button.firstChild.textContent = 'Placing order ';
+  orderStatus.classList.remove('is-error');
+  orderStatus.textContent = 'Processing your order…';
+  confirmation.hidden = true;
+  const slowTimer = setTimeout(() => { orderStatus.textContent = 'Still processing. Please do not submit again.'; }, 700);
   try {
     const result = await api('/api/orders', { method: 'POST', body: JSON.stringify({ items }) });
     cart.clear();
     renderCart();
-    orderStatus.classList.remove('is-error');
+    orderReference = result.id;
+    $('order-reference').textContent = orderReference;
+    $('copy-feedback').textContent = '';
+    $('reference-fallback').hidden = true;
+    confirmation.hidden = false;
     orderStatus.textContent = `Order confirmed: ${result.id}`;
   } catch (error) {
     if (error.status === 401) {
-      signOut('Your session expired. Sign in again to continue.');
+      signOut('Your session expired. Sign in again to continue.', true);
       return;
     }
     orderStatus.classList.add('is-error');
     orderStatus.textContent = `Could not place order. ${error.message}`;
   } finally {
+    clearTimeout(slowTimer);
     button.firstChild.textContent = 'Place order ';
     button.disabled = cart.size === 0;
   }
 });
 
-initScenarios();
+$('copy-reference').addEventListener('click', async () => {
+  if (!orderReference) return;
+  const feedback = $('copy-feedback');
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+    await navigator.clipboard.writeText(orderReference);
+    feedback.textContent = 'Reference copied to clipboard.';
+    $('reference-fallback').hidden = true;
+  } catch {
+    feedback.textContent = 'Clipboard permission unavailable. Select and copy the reference below.';
+    const fallback = $('reference-fallback');
+    fallback.value = orderReference;
+    fallback.hidden = false;
+    fallback.focus();
+    fallback.select();
+  }
+});

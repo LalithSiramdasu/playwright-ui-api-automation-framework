@@ -103,15 +103,15 @@ Open **http://127.0.0.1:4300**. The dashboard runs *only on localhost* and runs 
 
 See **[Dashboard guide](docs/DASHBOARD.md)** for setup, architecture, security, and result semantics.
 
-## Good Form — redesigned shopping test target
+## Good Form — shopping application and integrated UX states
 
-The bundled `demo-app/` now uses a **cool steel-grey editorial storefront** with custom CSS product visuals, stronger responsive composition, and meaningful loading/error/recovery interactions. The core UI locators and REST endpoints used by the existing Playwright suite remain stable.
+The bundled `demo-app/` uses a **steel-grey editorial storefront** with a responsive layout, keyboard-accessible forms, and functional shopping flows. Prices are shown in **Indian rupees (INR)**; the API represents money in integer **paise** (`pricePaise` and `totalPaise`) to avoid floating-point currency arithmetic.
 
-After signing in, switch to **Experience lab** to inspect the 10 controlled states supplied in the reference video: empty, loading, error, offline, slow network, no results, permission denied, session expired, form validation and success. They are **explicitly labeled reproducible QA fixtures**, not claims about real production network failures.
+The 10 requested UX conditions are part of real workflows, **not a separate Experience Lab or a set of showcase cards**: empty cart, loading skeletons, catalog error with retry, offline notice, slow-network feedback, empty search results, clipboard-permission fallback, expired checkout session, form validation, and order confirmation. The failure conditions are reproducible through Playwright network interception and browser controls; they are not fabricated failures shown to shoppers.
 
-See **[storefront design rationale, UX states and skill references](docs/STORE_DESIGN.md)**. The new cases in `tests/ui/states.spec.ts` check the 10 fixtures and recovery behaviors. Run `npm run demo:start` to explore at `http://127.0.0.1:4173`.
+See **[store design and real-state behavior](docs/STORE_DESIGN.md)** and **[the implementation roadmap](docs/ROADMAP.md)**. The corresponding browser tests are in `tests/ui/states.spec.ts`.
 
-To restore the project later, the original `commands.txt` now includes the exact `git clone` / `npm ci` commands without removing any of your existing notes.
+To restore the project later, `commands.txt` contains the full `git clone` / `npm ci` sequence in addition to the earlier local commands.
 
 ## Useful test commands
 

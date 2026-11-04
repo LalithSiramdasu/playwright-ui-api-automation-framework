@@ -1,31 +1,37 @@
-# Verification record — 2026-11-03
+# Verification history and release gate
 
-This is an honest snapshot of checks actually performed when this starter project was assembled.
+This file separates evidence from earlier versions, new local checks, and planned checks. Do not reuse earlier pass counts for a different commit.
+
+## Previous verified release — 2026-11-04
+
+Commit [`3aa38a25`](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/commit/3aa38a25c2eeff0692745a6ebcd61651e2b55ab7) completed GitHub Actions successfully: [workflow run 41792430740](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41792430740). That release used a separate Experience Lab and USD prices. **Its check counts must not be attributed to newer storefront code.**
+
+## Integrated-state / INR release — local pre-push evidence
 
 | Check | Result |
 | --- | --- |
-| Node.js server JavaScript syntax (`node --check`) | Passed |
-| Demo frontend JavaScript syntax (`node --check`) | Passed |
-| Standalone integration/API tests (`npm run test:server`) | **5 passed / 0 failed** |
-| TypeScript parser validation of source, tests and config | **12 files parsed / 0 syntax errors** |
-| Package installation (`npm install`) | Not completed in the assembly environment (dependency-registry access timed out) |
-| Full Playwright/TypeScript typecheck | Not run, dependencies unavailable locally |
-| Playwright's TS test suite (Chromium/Firefox/WebKit) | Not run; packages and browsers were not provisioned here |
-| Additional exploratory Chromium browser check | Blocked by the assembly environment's browser network administrator restrictions |
-| GitHub Actions workflow | Included but not yet exercised in a newly published repository |
+| `node --check demo-app/public/app.js` | Passed |
+| `node --check demo-app/server.mjs` | Passed |
+| `npm run test:server` | 11 passed, 0 failed |
+| Full TypeScript / ESLint | Run in GitHub Actions after publishing |
+| Cross-browser Playwright | Run in GitHub Actions after publishing |
+| Browser visual inspection in this environment | Blocked by browser network policy; verify locally and in CI |
 
-These limits mean **it would be incorrect to claim the entire Playwright suite is passing** until `npm install`, `npx playwright install`, `npm run typecheck`, `npm run lint`, and `npm test` run successfully on a normal development machine or on GitHub Actions.
-
-How to validate after publication:
+**Release requirement:** inspect the new push's GitHub Actions run at [Actions](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions). Only claim browser coverage and current green CI if that specific run succeeds. For personal laptop validation, run:
 
 ```bash
-npm install
+npm ci
 npx playwright install
+npm --prefix dashboard ci
+npm run dashboard:build
 npm run typecheck
 npm run lint
 npm run test:server
 npm test
-npm run test:report
 ```
 
-Check Actions for green results and review any test artifacts. If errors occur, fix them and commit the corrections before including “CI passing” as a portfolio claim.
+To see real UI behavior, start `npm run demo:start` and visit `http://127.0.0.1:4173`. The ten states are now part of the actual purchase journey; intentionally delay/intercept requests with Playwright to reproduce fault scenarios. See `tests/ui/states.spec.ts`.
+
+## Historical starter notes — 2026-11-03
+
+At initial assembly, the dependency-free API suite passed **5/5** and Node syntax checks passed, but the complete Playwright suite was not available in that assembly environment. This is a historical note, not a current release result.

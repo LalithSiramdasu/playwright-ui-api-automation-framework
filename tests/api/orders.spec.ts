@@ -18,9 +18,9 @@ test.describe('API | Orders', () => {
       { productId: 102, quantity: 1 },
     ]);
     expect(response.status()).toBe(201);
-    const order: { id: string; totalCents: number; status: string } = await response.json();
+    const order: { id: string; totalPaise: number; status: string } = await response.json();
     expect(order.id).toEqual(expect.any(String));
-    expect(order.totalCents).toBe(6097);
+    expect(order.totalPaise).toBe(609700);
     expect(order.status).toBe('confirmed');
   });
 

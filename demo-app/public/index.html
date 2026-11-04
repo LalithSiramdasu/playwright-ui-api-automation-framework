@@ -18,11 +18,15 @@
           <span class="identity-text">GOOD FORM<span class="identity-subtitle">OBJECTS FOR EVERY DAY</span></span>
         </div>
         <div class="header-meta">
-          <span class="environment-indicator"><span aria-hidden="true"></span> CONTROLLED TEST ENVIRONMENT</span>
+          <span class="environment-label">SANDBOX / LOCAL CHECKOUT ONLY</span>
           <span class="header-edition">EDITION / 001</span>
         </div>
       </header>
 
+      <div id="network-banner" class="network-banner" hidden>
+        <div><strong>Connection unavailable.</strong> Check your network before continuing. Your selection will be kept.</div>
+        <button id="retry-connection" type="button">Try again</button>
+      </div>
       <main id="main-content" class="main-content">
         <section id="login-screen" class="login-layout" aria-label="Sign in">
           <div class="editorial-intro">
@@ -47,11 +51,11 @@
               <form id="login-form">
                 <div class="form-field">
                   <label for="email">Email address</label>
-                  <input id="email" name="email" type="email" autocomplete="username" placeholder="you@example.com" required />
+                  <input id="email" name="email" type="email" autocomplete="username" aria-describedby="email-field-error" placeholder="you@example.com" required /><small id="email-field-error" class="field-error" hidden></small>
                 </div>
                 <div class="form-field">
                   <label for="password">Password</label>
-                  <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
+                  <input id="password" name="password" type="password" autocomplete="current-password" aria-describedby="password-field-error" placeholder="Enter your password" required /><small id="password-field-error" class="field-error" hidden></small>
                 </div>
                 <button id="sign-in-button" class="button button-primary sign-in-button" type="submit">Sign in <span aria-hidden="true">↗</span></button>
               </form>
@@ -75,14 +79,11 @@
             <button type="button" id="logout" class="button button-text">Log out <span aria-hidden="true">↗</span></button>
           </div>
 
-          <div class="shop-navigation" aria-label="Shop sections">
-            <button type="button" id="nav-shop" class="navigation-item is-active" aria-pressed="true">The collection <span>03</span></button>
-            <button type="button" id="nav-states" class="navigation-item" aria-pressed="false">Experience lab <span>10</span></button>
-          </div>
-
           <div id="shop-content" class="shop-layout">
             <section class="catalog-panel" aria-label="Product catalog">
-              <div class="catalog-intro"><div><span class="overline">COLLECTION / 001</span><h3>Things worth keeping.</h3></div><p>Designed for the days between big moments.</p></div>
+              <div class="catalog-intro"><div><span class="overline">COLLECTION / 001</span><h3>Things worth keeping.</h3><p>Designed for the days between big moments.</p></div><button type="button" id="refresh-products" class="refresh-button">Refresh collection <span aria-hidden="true">↻</span></button></div>
+              <div id="catalog-feedback" class="catalog-feedback" aria-live="polite" hidden></div>
+              <p id="slow-notice" class="slow-notice" hidden>Still loading the collection. Your cart and filters are safe.</p>
               <div class="filter-bar">
                 <div class="filter-field search-field"><label for="search">Search products</label><div class="input-wrap"><span aria-hidden="true" class="search-icon"></span><input type="search" id="search" placeholder="Try “mouse” or “bottle”" autocomplete="off" /></div></div>
                 <div class="filter-field category-field"><label for="category">Product category</label><select id="category"><option value="">All categories</option><option>Electronics</option><option>Stationery</option><option>Lifestyle</option></select></div>
@@ -97,14 +98,16 @@
               <p class="cart-description">A simple checkout, built to exercise the full purchase journey.</p>
               <div id="cart-empty" class="cart-empty"><span class="empty-bag" aria-hidden="true"></span><strong>Your bag is empty.</strong><p>A good start is finding something you like.</p><button type="button" id="browse-catalog" class="link-button">Explore the collection <span aria-hidden="true">↗</span></button></div>
               <ul id="cart-items" class="cart-items"></ul>
-              <div class="cart-summary"><div><span>Subtotal</span><strong data-testid="cart-total">$0.00</strong></div><p>No real payment will be collected.</p><button id="place-order" class="button button-primary checkout-button" type="button" disabled>Place order <span aria-hidden="true">↗</span></button><p id="order-status" role="status" aria-live="polite" class="order-status"></p></div>
+              <div class="cart-summary"><div><span>Subtotal</span><strong data-testid="cart-total">₹0</strong></div><p>No real payment will be collected.</p><button id="place-order" class="button button-primary checkout-button" type="button" disabled>Place order <span aria-hidden="true">↗</span></button><p id="order-status" role="status" aria-live="polite" class="order-status"></p>
+                <div id="order-confirmation" class="order-confirmation" hidden>
+                  <p class="receipt-label">ORDER REFERENCE / LOCAL DEMO</p>
+                  <div class="receipt-row"><span id="order-reference" class="receipt-reference"></span><button type="button" id="copy-reference" class="link-button">Copy reference</button></div>
+                  <p id="copy-feedback" class="copy-feedback" aria-live="polite"></p>
+                  <input id="reference-fallback" class="reference-fallback" type="text" aria-label="Order reference for manual copying" readonly hidden />
+                </div></div>
             </aside>
           </div>
 
-          <section id="states-content" class="state-library" hidden aria-label="Experience state library">
-            <div class="state-library-intro"><div><span class="overline">QA PLAYGROUND / 10 STATES</span><h3>Designed for every condition.</h3><p>A deliberate set of interaction states for testing the moments between the happy paths.</p></div><p class="state-note">These fixtures simulate rare conditions without altering server data. Real catalog, login, and checkout paths remain testable in the collection.</p></div>
-            <div class="state-library-layout"><div><h4 class="state-group-title">SELECT A STATE <span>01 — 10</span></h4><div id="state-options" class="state-options"></div></div><div class="state-preview-shell"><div class="preview-topline"><span>LIVE PREVIEW / LOCAL ONLY</span><span class="preview-dot"></span></div><div id="state-preview" class="state-preview-placeholder"><span class="preview-placeholder-icon" aria-hidden="true">✳</span><h4>Choose a condition.</h4><p>Explore a state on the left to see its messaging and recovery action here.</p></div></div></div>
-          </section>
         </section>
       </main>
       <footer class="site-footer"><span>© GOOD FORM / A TESTING WORKSPACE</span><span>LOCAL APPLICATION · NO REAL TRANSACTIONS</span><span>BUILT FOR QUALITY, NOT COMMERCE.</span></footer>
