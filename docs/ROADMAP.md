@@ -40,7 +40,15 @@
 - Suite and browser options follow the active project profile, and execution requests include the explicit project ID and environment.
 - Overview KPIs, trends, recent executions, run history, test-suite counts, and report listings are filtered by project/environment, with Northline/local classification for legacy entries.
 - A dedicated Chromium UI test suite checks selection, API payload and scoped analytics; server-side project safety preflight is unchanged.
-- **Next:** Module 7 will improve backend data retention, filtered API responses, exports, historical comparisons and report reliability.
+- **Completed next:** Module 7 adds scoped exports, comparisons, accurate flaky/retry counts, retention cleanup and guarded history deletion.
+
+## Module 7 milestone — reporting, comparisons and history controls
+
+- Backend offers scoped run history/analytics, CSV/JSON summaries with spreadsheet-injection protection, and two-run comparison with case-level regression/resolution signals.
+- React Reports view exposes exports, comparison, accurate flaky/retry totals, and guarded single-run or scoped-history deletion.
+- Run artifacts are removed when their run is deleted or evicted by the 100-run retention cap; unrelated project history stays intact.
+- Node integration tests use an isolated temporary history directory, and dashboard browser tests exercise the controls without deleting real user data.
+- **Next:** Module 8 adds project-aware GitHub Actions, reviewed test triggers and artifact-management policies.
 
 ## P1 — Reliability and coverage (next)
 

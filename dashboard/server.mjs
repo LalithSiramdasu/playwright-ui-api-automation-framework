@@ -1,18 +1,19 @@
 /** Local-only orchestration API for the QA dashboard. No arbitrary shell commands. */
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync, createReadStream } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, createReadStream, rmSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUITES, summarizeReport } from './reporting.mjs';
+import { historyForScope, summarizeHistory, compareRuns, exportJson, exportCsv } from './analytics.mjs';
 import { loadProjectRegistry } from '../src/core/project-registry.mjs';
 import { configuredSecretValues, redactSensitiveText } from '../src/core/redaction.mjs';
 import { resolveProjectRun, makePlaywrightArguments, selectionEnvironment, RunConfigurationError } from '../src/core/project-runner.mjs';
 
 const dashboardDir = dirname(fileURLToPath(import.meta.url));
 const root = resolve(dashboardDir, '..');
-const dataDir = join(dashboardDir, 'data');
+const dataDir = process.env.DASHBOARD_DATA_DIR ? resolve(process.env.DASHBOARD_DATA_DIR) : join(dashboardDir, 'data');
 const artifactDir = join(dataDir, 'artifacts');
 const historyFile = join(dataDir, 'runs.json');
 const distDir = join(dashboardDir, 'dist');
@@ -20,6 +21,7 @@ const playwrightCli = join(root, 'node_modules', 'playwright', 'cli.js');
 const port = Number(process.env.DASHBOARD_PORT ?? 4300);
 const MAX_RUNS = 100;
 const MAX_LOG_LINES = 350;
+const VALID_RUN_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 mkdirSync(artifactDir, { recursive: true });
 
 const secretValues = configuredSecretValues();
@@ -39,6 +41,34 @@ for (const run of runs) {
   }
 }
 const save = () => writeFileSync(historyFile, JSON.stringify(runs.slice(0, MAX_RUNS), null, 2));
+function removeArtifact(id) {
+  if (!VALID_RUN_ID.test(id)) return; // never derive a filesystem path from an untrusted ID
+  rmSync(join(artifactDir, id), { recursive: true, force: true });
+}
+function removeHistory(predicate) {
+  const deleted = runs.filter(predicate);
+  for (const run of deleted) removeArtifact(run.id);
+  runs = runs.filter((run) => !predicate(run));
+  save();
+  return deleted.length;
+}
+function validScope(projectId, environment) {
+  if (typeof projectId !== 'string' || typeof environment !== 'string') return false;
+  return loadProjectRegistry().some((project) => project.id === projectId &&
+    Object.prototype.hasOwnProperty.call(project.environments, environment));
+}
+function sendDownload(res, format, payload, projectId, environment) {
+  const mime = format === 'csv' ? 'text/csv' : 'application/json';
+  const safeName = `${projectId}-${environment}-qa-runs.${format}`;
+  res.writeHead(200, { 'Content-Type': `${mime}; charset=utf-8`,
+    'Content-Disposition': `attachment; filename="${safeName}"`,
+    'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+  res.end(payload);
+}
+function trustedOrigin(req) {
+  const origin = req.headers.origin;
+  return !origin || origin === `http://${req.headers.host}`;
+}
 save();
 let activeProcess = null;
 let activeId = null;
@@ -89,7 +119,9 @@ function startRun(selection) {
     finishedAt: null, durationMs: 0, counts: null, cases: [], logs: [], exitCode: null,
   };
   runs.unshift(run);
+  const evicted = runs.slice(MAX_RUNS);
   runs = runs.slice(0, MAX_RUNS);
+  for (const expired of evicted) removeArtifact(expired.id);
   activeId = run.id;
   save();
   const folder = join(artifactDir, run.id);
@@ -159,16 +191,58 @@ const server = createServer(async (req, res) => {
       }));
       return send(res, 200, { projects, executionMode: 'project-aware' });
     }
+    if (req.method === 'GET' && (pathname === '/api/analytics' || pathname === '/api/exports')) {
+      const projectId = url.searchParams.get('projectId');
+      const environment = url.searchParams.get('environment');
+      if (!validScope(projectId, environment)) return send(res, 400, { error: 'Unknown project or environment' });
+      const scoped = historyForScope(runs, projectId, environment);
+      if (pathname === '/api/analytics') return send(res, 200, { projectId, environment, summary: summarizeHistory(scoped) });
+      const format = url.searchParams.get('format');
+      if (!['csv', 'json'].includes(format)) return send(res, 400, { error: 'Export must be csv or json' });
+      return sendDownload(res, format, format === 'csv' ? exportCsv(scoped) : exportJson(scoped), projectId, environment);
+    }
+    if (req.method === 'GET' && segments[0] === 'api' && segments[1] === 'runs' && segments[3] === 'compare' && segments.length === 4) {
+      const newer = runs.find((run) => run.id === segments[2]);
+      const older = runs.find((run) => run.id === url.searchParams.get('with'));
+      if (!newer || !older) return send(res, 404, { error: 'Comparison run not found' });
+      try { return send(res, 200, { comparison: compareRuns(older, newer) }); }
+      catch (error) { return send(res, 400, { error: error.message }); }
+    }
+    if (req.method === 'DELETE') {
+      if (!trustedOrigin(req)) return send(res, 403, { error: 'Untrusted origin' });
+      if (activeProcess) return send(res, 409, { error: 'Stop active execution before deleting history' });
+      if (segments[0] === 'api' && segments[1] === 'runs' && segments.length === 3) {
+        const id = segments[2];
+        const run = runs.find((item) => item.id === id);
+        if (!VALID_RUN_ID.test(id) || !run) return send(res, 404, { error: 'Run not found' });
+        const body = await parseBody(req);
+        if (body?.confirm !== id) return send(res, 400, { error: 'Confirmation must match the run ID' });
+        return send(res, 200, { deleted: removeHistory((item) => item.id === id) });
+      }
+      if (pathname === '/api/history') {
+        const body = await parseBody(req);
+        if (!validScope(body?.projectId, body?.environment)) return send(res, 400, { error: 'Invalid project or environment' });
+        if (body?.confirm !== 'DELETE HISTORY') return send(res, 400, { error: 'Type DELETE HISTORY to confirm' });
+        const scoped = (run) => historyForScope([run], body.projectId, body.environment).length === 1;
+        return send(res, 200, { deleted: removeHistory(scoped), projectId: body.projectId, environment: body.environment });
+      }
+      return send(res, 404, { error: 'Endpoint not found' });
+    }
     if (req.method === 'GET' && pathname === '/api/runs') {
-      return send(res, 200, { runs: runs.map(recordForList), activeId });
+      const projectId = url.searchParams.get('projectId');
+      const environment = url.searchParams.get('environment');
+      if (projectId !== null || environment !== null) {
+        if (!validScope(projectId, environment)) return send(res, 400, { error: 'Unknown project or environment' });
+      }
+      const requested = projectId === null ? runs : historyForScope(runs, projectId, environment);
+      return send(res, 200, { runs: requested.map(recordForList), activeId });
     }
     if (req.method === 'GET' && segments[0] === 'api' && segments[1] === 'runs' && segments.length === 3) {
       const run = runs.find((candidate) => candidate.id === segments[2]);
       return run ? send(res, 200, { run }) : send(res, 404, { error: 'Run not found' });
     }
     if (req.method === 'POST') {
-      const origin = req.headers.origin;
-      if (origin && !/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(origin)) {
+      if (!trustedOrigin(req)) {
         return send(res, 403, { error: 'Untrusted origin' });
       }
       if (pathname === '/api/runs') {
@@ -199,7 +273,7 @@ const server = createServer(async (req, res) => {
     }
     if (req.method === 'GET' && segments[0] === 'reports' && segments.length >= 2) {
       const id = segments[1];
-      if (!/^[0-9a-f-]{36}$/.test(id) || !runs.some((run) => run.id === id)) return send(res, 404, { error: 'Unknown run' });
+      if (!VALID_RUN_ID.test(id) || !runs.some((run) => run.id === id)) return send(res, 404, { error: 'Unknown run' });
       const base = join(artifactDir, id, 'html');
       const path = safePath(base, segments.slice(2).join('/') || 'index.html');
       return path ? serveFile(res, path) : send(res, 403, { error: 'Invalid path' });

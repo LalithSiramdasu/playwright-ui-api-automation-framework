@@ -101,7 +101,7 @@ npm run dashboard           # build UI and start local API + web server
 
 Open **http://127.0.0.1:4300**. The dashboard runs *only on localhost* and runs one allowlisted suite at a time. For development, run `npm run dashboard:start` and `npm run dashboard:dev` in two terminals, then open **http://127.0.0.1:5173**.
 
-See **[Dashboard guide](docs/DASHBOARD.md)** for setup, architecture, security, and result semantics.
+See **[Dashboard guide](docs/DASHBOARD.md)** for setup, architecture, security, and result semantics. Module 7 adds **per-project CSV/JSON exports, run comparisons, flaky/retry counts, and confirmed history deletion**; see **[Reporting and Analytics](docs/REPORTING_ANALYTICS.md)**.
 
 ## Northline Goods — shopping application and integrated UX states
 

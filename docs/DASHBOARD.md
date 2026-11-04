@@ -24,7 +24,9 @@ For frontend development, start the backend with `npm run dashboard:start` in on
 ```text
 React dashboard (dashboard/src/)
     | GET /api/projects, GET /api/health, GET /api/runs, GET /api/runs/:id
+    | GET /api/analytics, GET /api/exports, GET /api/runs/:id/compare
     | POST /api/runs, POST /api/runs/:id/cancel
+    | DELETE /api/runs/:id, DELETE /api/history
     v
 Node local API (dashboard/server.mjs)
     | profile + environment + allowlisted suite/browser --> Playwright CLI (spawn, no shell)
@@ -63,6 +65,14 @@ npm run test:dashboard
 
 These additional UI tests check the project/environment dropdowns, supported suite choices, request payload, and isolated analytics using controlled fixtures. They do not fabricate dashboard production results; they use Playwright request interception only inside the test process. Existing test suite results are still real.
 
+
+## Module 7 — reports, export, comparison and deletion
+
+The **Reports** tab provides scoped CSV/JSON exports containing only summary metadata and counts; it omits raw test errors and execution logs. It also allows comparing two completed runs from the same project/environment and shows flaky cases and total retry attempts for reports captured with the new parser.
+
+To delete one run, confirm in the browser. To clear all history for the selected project/environment, type **DELETE HISTORY**; the backend rejects deletion while any runner is active and removes only matching records and report artifacts. Deleted local history is **not recoverable** from GitHub. The dashboard retains up to 100 recent run records and cleans up artifacts evicted by the retention cap.
+
+Details, API endpoints, security limitations and test commands are documented in [Reporting and Analytics](REPORTING_ANALYTICS.md).
 
 ## Safety and reliability
 

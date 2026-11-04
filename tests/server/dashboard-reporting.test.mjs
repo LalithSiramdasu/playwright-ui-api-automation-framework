@@ -18,13 +18,13 @@ test('report parser summarizes passed, flaky, failed and skipped cases', () => {
     ] }] }],
   };
   const output = summarizeReport(report);
-  assert.deepEqual(output.counts, { total: 4, passed: 2, failed: 1, skipped: 1, flaky: 1 });
+  assert.deepEqual(output.counts, { total: 4, passed: 2, failed: 1, skipped: 1, flaky: 1, retries: 1 });
   assert.equal(output.cases[1].error, 'Expected 201, got 500');
   assert.equal(output.cases[2].durationMs, 60);
   assert.equal(output.durationMs, 1500);
 });
 
 test('report parser handles empty or incomplete result files safely', () => {
-  assert.deepEqual(summarizeReport(null).counts, { total: 0, passed: 0, failed: 0, skipped: 0, flaky: 0 });
+  assert.deepEqual(summarizeReport(null).counts, { total: 0, passed: 0, failed: 0, skipped: 0, flaky: 0, retries: 0 });
   assert.equal(summarizeReport({ suites: [{ title: 'empty' }] }).cases.length, 0);
 });

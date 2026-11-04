@@ -15,6 +15,8 @@ export function summarizeReport(report) {
           status,
           durationMs: (test.results ?? []).reduce((total, item) => total + (item.duration ?? 0), 0),
           error: String(result.errors?.[0]?.message ?? result.error?.message ?? '').slice(0, 2500),
+          attempts: test.results?.length ?? 0,
+          retries: Math.max(0, (test.results?.length ?? 0) - 1),
         });
       }
     }
@@ -25,7 +27,7 @@ export function summarizeReport(report) {
   const failed = cases.filter((test) => test.status === 'failed').length;
   const skipped = cases.filter((test) => test.status === 'skipped').length;
   return {
-    counts: { total: cases.length, passed, failed, skipped, flaky: cases.filter((test) => test.status === 'flaky').length },
+    counts: { total: cases.length, passed, failed, skipped, flaky: cases.filter((test) => test.status === 'flaky').length, retries: cases.reduce((sum, test) => sum + test.retries, 0) },
     durationMs: Number(stats.duration ?? 0),
     cases,
   };

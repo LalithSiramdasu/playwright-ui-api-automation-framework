@@ -66,3 +66,11 @@ Run `npm run test:server`, `npm run typecheck`, `npm run lint`, `npm test`, and 
 - All visible run counts, report listings and trend charts must follow the active project and environment. Legacy run records are Northline/local.
 - Do not enable unsupported suites or browsers. Do not allow UI controls to opt in to remote execution or bypass server-side approval.
 - Keep dashboard e2e checks in `dashboard/e2e/`, outside product UI tests, and verify them separately in CI.
+
+## Module 7 reporting safeguards
+
+- Never mix history across registered projects or environments. Legacy records lacking metadata belong to `northline-goods/local` only.
+- CSV/JSON exports are allowlisted summaries, not arbitrary log/report downloads. Escape CSV fields and prevent formula execution.
+- Delete actions must require explicit confirmation, reject during active runs, and remove only report artifacts for valid known run UUIDs.
+- Preserve deterministic server-side tests with an isolated `DASHBOARD_DATA_DIR`; do not delete a user's actual history during CI.
+- The dashboard remains single-user localhost-only; it is not a public hosted service.

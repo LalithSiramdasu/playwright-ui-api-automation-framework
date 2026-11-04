@@ -135,3 +135,21 @@ npm run dashboard
 # Choose environment, test suite, and applicable browser, then run.
 # Historical counts and reports follow the active project and environment.
 # Sample API staging uses the local read-only simulation; external targets require approval.
+
+
+============================================================
+MODULE 7 — REPORTS AND HISTORY (LOCAL DASHBOARD)
+============================================================
+
+# Start QA Control Center and use the Reports tab:
+npm run dashboard
+
+# Verify reporting APIs / safe deletion integration tests:
+npm run test:server
+
+# Test the reporting controls in Chromium (dashboard must build):
+npm run dashboard:build
+npm run test:dashboard
+
+# CSV/JSON export, comparison and history deletion are available in Reports.
+# WARNING: Deleted dashboard/data/ history and reports are not restored by git clone.

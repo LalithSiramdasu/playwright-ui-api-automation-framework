@@ -78,3 +78,11 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - `node --check` / TypeScript parser check of edited React JSX and new Playwright test sources: passed.
 - The React production build, dashboard Chromium E2E checks, TypeScript, ESLint and other Playwright suites require the latest commit's GitHub Actions confirmation. No local browser runner dependencies are installed in this editing environment.
 - The screenshot of `6967000` shows an older failed run; later Module 5 commit `966080f` has successful [run 41847006208](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41847006208).
+
+## Module 7 — reporting and analytics (local evidence before GitHub Actions)
+
+- `node --test tests/server/*.test.mjs`: **67 passed, 0 failed**. This includes actual Node API requests against temporary seeded history, scope isolation, export redaction/CSV formula protection, completed-run comparison, deletion origin/confirmation and artifact removal.
+- `node scripts/validate-projects.mjs`: 4 project profiles validated (existing configurations unchanged).
+- `node --check dashboard/server.mjs` and `node --check dashboard/analytics.mjs`: Passed.
+- Added dedicated Chromium dashboard tests for exports, comparisons and deletion UI; new run's GitHub Actions must pass before these are marked verified.
+- React Vite build, lint, typecheck and complete cross-browser regression are release gates verified only by the *new* commit's GitHub Actions. Older green runs do not prove Module 7.
