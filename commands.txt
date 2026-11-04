@@ -1,0 +1,26 @@
+git status
+git pull origin main
+
+node -v
+npm -v
+
+npm install
+npx playwright install
+npm run dashboard:setup
+
+npm run dashboard
+
+npm run demo:start
+
+del dashboard\data\runs.json
+rmdir /s /q dashboard\data\artifacts
+
+
+
+Order	Suite	What you'll learn
+1	Smoke	Critical-path testing
+2	API	REST endpoints, HTTP codes and response assertions
+3	Negative	Invalid credentials and invalid inputs
+4	Regression	Testing existing features after changes
+5	UI	Browser interactions and Page Object Model
+6	Full validation	Cross-browser execution and complete test coverage
