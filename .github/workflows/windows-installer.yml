@@ -1,0 +1,82 @@
+name: Build Windows QA Control Center installer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - desktop/**
+      - dashboard/**
+      - src/**
+      - tests/**
+      - projects/**
+      - demo-app/**
+      - package.json
+      - package-lock.json
+      - playwright.config.ts
+      - .github/workflows/windows-installer.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-installer-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows-installer:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}\desktop\build\runtime\browsers
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install tested framework dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install React dashboard dependencies
+        run: npm --prefix dashboard ci --no-audit --no-fund
+      - name: Build React dashboard
+        run: npm run dashboard:build
+      - name: Prepare packaged runtime
+        run: npm run desktop:prepare
+      - name: Download Chromium, Firefox, WebKit into the packaged runtime
+        run: npx playwright install chromium firefox webkit
+      - name: Install Electron and Windows builder
+        run: npm --prefix desktop install --no-audit --no-fund
+      - name: Build Windows NSIS installer
+        run: npm --prefix desktop run dist
+      - name: Smoke test packaged Node runner and real API test suite
+        run: npm run desktop:smoke
+      - name: Verify all three packaged browser engine executables
+        shell: pwsh
+        run: |
+          $runtime = Join-Path $PWD 'desktop\dist\win-unpacked\resources\qa-runtime'
+          $env:PLAYWRIGHT_BROWSERS_PATH = Join-Path $runtime 'browsers'
+          & (Join-Path $runtime 'bin\node.exe') -e "const p=require(process.argv[1]);for(const n of ['chromium','firefox','webkit']) {const f=p[n].executablePath(); if(!require('node:fs').existsSync(f))throw Error(n+': '+f);console.log(n+' '+f)}" (Join-Path $runtime 'node_modules\playwright')
+      - name: Write Windows installer checksum
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem desktop\dist\QA-Control-Center-Setup-*.exe | Select-Object -First 1
+          if (-not $exe) { throw 'Windows installer was not generated' }
+          $hash = (Get-FileHash $exe.FullName -Algorithm SHA256).Hash.ToLower()
+          "$hash  $($exe.Name)" | Out-File desktop\dist\SHA256SUMS.txt -Encoding ascii
+          Write-Output "$($exe.Name) SHA256=$hash"
+      - name: Upload installer artifact for OWNER-CREATED GitHub Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-control-center-windows-installer
+          path: |
+            desktop/dist/QA-Control-Center-Setup-*.exe
+            desktop/dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
