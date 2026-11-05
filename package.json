@@ -37,7 +37,10 @@
     "test:sample-api-staging": "node scripts/run-project.mjs --project sample-api --environment staging --suite api",
     "pilots:validate": "node scripts/pilot-audit.mjs",
     "project:onboard": "node scripts/onboard-project.mjs",
-    "project:readiness": "node scripts/project-readiness.mjs"
+    "project:readiness": "node scripts/project-readiness.mjs",
+    "desktop:prepare": "node desktop/scripts/prepare.mjs",
+    "desktop:build": "npm run dashboard:build && npm run desktop:prepare && npm --prefix desktop run dist",
+    "desktop:smoke": "node desktop/scripts/smoke.mjs"
   },
   "engines": {
     "node": ">=20"

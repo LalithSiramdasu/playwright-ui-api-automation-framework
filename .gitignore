@@ -16,3 +16,8 @@ blob-report/
 dashboard/node_modules/
 dashboard/dist/
 dashboard/data/
+
+# Windows installer staging and distributables
+desktop/node_modules/
+desktop/build/
+desktop/dist/

@@ -47,7 +47,7 @@ const reportPrefix = selection ? `${selection.projectId}/${selection.environment
 
 // Local fixtures are explicitly mapped in trusted source code, never from JSON profiles.
 const localServers: Record<string, { command: string; url: string }> = {
-  'northline-goods': { command: 'npm run demo:start', url: 'http://127.0.0.1:4173/health' },
+  'northline-goods': { command: process.env.QA_DESKTOP_MODE === '1' ? 'node demo-app/server.mjs' : 'npm run demo:start', url: 'http://127.0.0.1:4173/health' },
   'sample-api': { command: 'node projects/sample-api/server.mjs', url: 'http://127.0.0.1:4174/health' },
   'sample-web': { command: 'node projects/sample-web/server.mjs', url: 'http://127.0.0.1:4175/health' },
 };
