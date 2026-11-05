@@ -45,9 +45,12 @@ function removeArtifact(id) {
 }
 function removeHistory(predicate) {
   const deleted = runs.filter(predicate);
+  const retained = runs.filter((run) => !predicate(run));
+  // Persist the new history before deleting irreversible report artifacts.
+  // If disk replacement fails, both in-memory history and reports remain intact.
+  saveRunHistory(historyFile, retained, MAX_RUNS);
+  runs = retained;
   for (const run of deleted) removeArtifact(run.id);
-  runs = runs.filter((run) => !predicate(run));
-  save();
   return deleted.length;
 }
 function validScope(projectId, environment) {

@@ -152,3 +152,10 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - Added an isolated server-level regression test that boots the dashboard twice against temporary mixed-status history, checks the HTTP response and saved JSON, and verifies recovery is not duplicated on a second restart.
 - This checks persisted dashboard state only. It does not claim an operating-system child process is necessarily terminated by a crash; ensure the local test process has stopped before restarting after a failure.
 - Verify the new commit's CI outcome and local Windows suite before considering this checkpoint complete.
+
+## History deletion failure safety — regression test (commit-specific CI pending)
+
+- Fixed the order of deletion operations: atomically save the new run index **before** removing the selected run's HTML report artifacts.
+- If the history file cannot be replaced, the API fails and retains both the in-memory run and its on-disk HTML report; the user may retry after repairing storage.
+- Added a server integration test using only isolated temporary data that makes the history destination unwritable via a directory collision, verifies no information was lost, restores the history destination, then confirms successful deletion.
+- This covers write-failure-before-deletion, not disk corruption caused by sudden power loss or cleanup failure after a successful save. The local dashboard still has no database or multi-user transactional guarantees.
