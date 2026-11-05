@@ -6,6 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { dirname, extname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SUITES, summarizeReport } from './reporting.mjs';
+import { isSafeStaticFile } from './static-boundary.mjs';
 import { historyForScope, summarizeHistory, compareRuns, exportJson, exportCsv } from './analytics.mjs';
 import { loadRunHistory, saveRunHistory } from './storage.mjs';
 import { loadProjectRegistry } from '../src/core/project-registry.mjs';
@@ -93,7 +94,12 @@ function serveFile(res, file) {
     '.jpg': 'image/jpeg', '.json': 'application/json', '.woff2': 'font/woff2', '.ico': 'image/x-icon',
   }[extname(file)] ?? 'application/octet-stream';
   res.writeHead(200, { 'Content-Type': mime, 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-cache' });
-  createReadStream(file).pipe(res);
+  const stream = createReadStream(file);
+  stream.on('error', () => {
+    if (!res.headersSent) send(res, 404, { error: 'File not found' });
+    else res.destroy();
+  });
+  stream.pipe(res);
 }
 async function parseBody(req) {
   let body = '';
@@ -273,7 +279,14 @@ const server = createServer(async (req, res) => {
       if (!VALID_RUN_ID.test(id) || !runs.some((run) => run.id === id)) return send(res, 404, { error: 'Unknown run' });
       const base = join(artifactDir, id, 'html');
       const path = safePath(base, segments.slice(2).join('/') || 'index.html');
-      return path ? serveFile(res, path) : send(res, 403, { error: 'Invalid path' });
+      if (!path) return send(res, 403, { error: 'Invalid path' });
+      if (!existsSync(path)) return send(res, 404, { error: 'File not found' });
+      // Prevent a report asset (or an HTML-report directory) from following a
+      // symlink into another run or outside the dashboard's artifact directory.
+      if (!isSafeStaticFile(path, [artifactDir, join(artifactDir, id), base])) {
+        return send(res, 403, { error: 'Report asset outside approved directory' });
+      }
+      return serveFile(res, path);
     }
     if (req.method === 'GET' && !pathname.startsWith('/api/')) {
       const target = safePath(distDir, pathname === '/' ? 'index.html' : pathname.slice(1));

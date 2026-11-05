@@ -133,3 +133,9 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - Added same-directory atomic history replacement with cleanup after failed rename.
 - Five isolated storage logic tests passed locally under Node 22. The sixth test boots the actual dashboard server against a temporary malformed history file; full standalone and cross-browser regression checks must be verified against this commit's own GitHub Actions run.
 - The change affects only local dashboard history storage; no external services are contacted by these checks.
+
+## Dashboard report file-boundary hardening — release checks
+
+- Restrict HTML report asset access to a selected run's directory after resolving symbolic links; this blocks a local report asset from referencing files outside that run.
+- Add standalone checks for legitimate reports, missing/directory paths, symlinked files/directories, and a live HTTP request against a fixture dashboard instance. Symlink tests skip only when the host OS does not grant permission to create them.
+- Keep the existing local dashboard and project-specific history intact. Verify the new commit's complete GitHub Actions run before marking the release successful.

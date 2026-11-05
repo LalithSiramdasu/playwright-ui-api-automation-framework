@@ -87,6 +87,7 @@ On Windows, **stop the dashboard**, back up `dashboard\\data\\runs.json` outside
 - The runner only accepts **hard-coded test suite and browser identifiers**, never arbitrary commands or arguments. It uses `spawn` without a shell.
 - Only one Playwright process runs at a time. You can cancel active runs.
 - Reports and logs are **local**, not uploaded from this dashboard. CI reports use GitHub Actions artifacts separately.
+- HTML report assets are restricted to the selected run's artifact directory **after resolving symlinks**. A report file cannot use a link to read a sibling run or arbitrary files from the local disk.
 - Test history is persisted locally; interrupted sessions are marked interrupted on restart.
 
 This local tool is designed for developer workstations, not exposure on public networks. It is **not a hosted multi-user QA management product**. Do not use it for secrets, production credentials or publicly accessible automation.
