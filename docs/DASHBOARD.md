@@ -112,3 +112,7 @@ This local tool is designed for developer workstations, not exposure on public n
 Keyboard users can press **Tab** on initial load to reach **Skip to main content**, then **Enter** to jump to the main workspace. The active sidebar page is exposed through `aria-current="page"`, and the mobile navigation toggle exposes `aria-expanded`.
 
 The dashboard distinguishes **refresh/data errors** from **user-action errors**. When a required data endpoint is unavailable, it displays an accessible error, disables new test runs rather than relying on stale health status, and offers **Retry dashboard data**. A failed run-launch or other action error is kept visible until the user dismisses it; a successful background poll no longer silently erases that error. These behaviors have dedicated Chromium browser regression tests. They improve local usability but are **not** a WCAG compliance certification or a substitute for manual accessibility auditing.
+
+## Frontend editorial redesign
+
+The QA Control Center now uses a deliberate **warm-neutral workspace and charcoal navigation rail** instead of neon visual effects. Hash-linked pages, a keyboard-closable mobile drawer, readable 320px phone layouts, a real history-filter reset action, and clearer loading/status messaging are documented in [the frontend design and contract inventory](FRONTEND_DESIGN_AND_CONTRACTS.md). The redesign does **not** add fake API capabilities or enable remote pilot execution from the dashboard.
