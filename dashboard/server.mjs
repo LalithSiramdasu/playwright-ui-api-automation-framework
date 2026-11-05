@@ -32,7 +32,7 @@ let runs = loadRunHistory(historyFile, MAX_RUNS);
 for (const run of runs) {
   run.logs = (run.logs ?? []).map(redact);
   run.cases = (run.cases ?? []).map((item) => ({ ...item, error: redact(item.error ?? '') }));
-  if (run.status === 'running') {
+  if (run.status === 'running' || run.status === 'cancelling') {
     run.status = 'interrupted';
     run.finishedAt = new Date().toISOString();
     run.logs = [...(run.logs ?? []), 'Dashboard restarted before this run finished.'].slice(-MAX_LOG_LINES);

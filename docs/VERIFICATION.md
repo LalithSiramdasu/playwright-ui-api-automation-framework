@@ -145,3 +145,10 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - Added keyboard-accessible skip navigation, accessible active-page state, and expanded/collapsed state on the mobile navigation toggle.
 - Dashboard refresh/data failures now show a separately actionable alert and fail closed on runner readiness. Test-launch failures remain visible until dismissed even while periodic background polling continues.
 - Added three Chromium browser tests for keyboard navigation, failed project discovery/retry, and persistent launch errors across successful refreshes. Verify with `npm run test:dashboard` and full commit-specific GitHub Actions before claiming release success.
+
+## Dashboard pending-run restart recovery — regression coverage
+
+- On startup, persisted runs marked \`running\` **or** \`cancelling\` are converted to \`interrupted\`, with a finish timestamp and one recovery log entry. Already passed/cancelled runs remain intact.
+- Added an isolated server-level regression test that boots the dashboard twice against temporary mixed-status history, checks the HTTP response and saved JSON, and verifies recovery is not duplicated on a second restart.
+- This checks persisted dashboard state only. It does not claim an operating-system child process is necessarily terminated by a crash; ensure the local test process has stopped before restarting after a failure.
+- Verify the new commit's CI outcome and local Windows suite before considering this checkpoint complete.
