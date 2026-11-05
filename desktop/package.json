@@ -6,7 +6,8 @@
   "description": "Local Windows desktop app containing the QA Control Center and Playwright runtime",
   "main": "main.mjs",
   "scripts": {
-    "dist": "electron-builder --win nsis --x64 --publish never"
+    "dist": "electron-builder --win nsis --x64 --publish never",
+    "dist:dir": "electron-builder --win dir --x64 --publish never"
   },
   "devDependencies": {
     "electron": "44.10.2",
@@ -21,12 +22,22 @@
     },
     "files": [
       "main.mjs",
-      "package.json"
+      "package.json",
+      "!node_modules/**",
+      "!build/**",
+      "!dist/**"
     ],
     "extraResources": [
       {
         "from": "build/runtime",
         "to": "qa-runtime",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "build/runner-modules",
+        "to": "qa-runtime/node_modules",
         "filter": [
           "**/*"
         ]

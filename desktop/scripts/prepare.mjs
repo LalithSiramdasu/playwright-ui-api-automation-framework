@@ -27,10 +27,15 @@ if (process.platform !== 'win32') {
   }
   if (!existsSync(join(root, 'dashboard', 'dist', 'index.html'))) throw Error('Build dashboard before packaging.');
   cpSync(join(root, 'dashboard', 'dist'), join(dest, 'dashboard', 'dist'), { recursive: true });
+  // Electron Builder filters node_modules in application resources. Stage the
+  // explicit Playwright runtime as plain resources, not app dependencies.
+  const modules = join(root, 'desktop', 'build', 'runner-modules');
+  rmSync(modules, { recursive: true, force: true });
+  mkdirSync(modules, { recursive: true });
   for (const name of ['playwright', 'playwright-core', '@playwright/test']) {
     const from = join(root, 'node_modules', ...name.split('/'));
     if (!existsSync(from)) throw Error('Playwright dependency missing: ' + name);
-    cpSync(from, join(dest, 'node_modules', ...name.split('/')), { recursive: true });
+    cpSync(from, join(modules, ...name.split('/')), { recursive: true });
   }
   mkdirSync(join(dest, 'bin'), { recursive: true });
   copyFileSync(process.execPath, join(dest, 'bin', 'node.exe'));

@@ -21,7 +21,7 @@ permissions:
 
 concurrency:
   group: windows-installer-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   windows-installer:
@@ -52,10 +52,16 @@ jobs:
         run: npx playwright install chromium firefox webkit
       - name: Install Electron and Windows builder
         run: npm --prefix desktop install --no-audit --no-fund
-      - name: Build Windows NSIS installer
-        run: npm --prefix desktop run dist
+      - name: Validate staged Playwright dependencies before packaging
+        shell: pwsh
+        run: |
+          if (-not (Test-Path desktop\build\runner-modules\playwright\cli.js)) { throw 'Missing staged Playwright CLI' }
+      - name: Package unpacked Windows application first
+        run: npm --prefix desktop run dist:dir
       - name: Smoke test packaged Node runner and real API test suite
         run: npm run desktop:smoke
+      - name: Build final Windows NSIS setup executable
+        run: npm --prefix desktop run dist
       - name: Verify all three packaged browser engine executables
         shell: pwsh
         run: |
