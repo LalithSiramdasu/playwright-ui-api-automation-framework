@@ -36,3 +36,8 @@
 .comparison-result strong{font-size:12px}.comparison-result p{margin:5px 0 0;font-size:11px;color:#acc7bf;line-height:1.6}
 @media(max-width:950px){.reporting-workbench{grid-template-columns:1fr}.reporting-operations:last-child{grid-column:auto}}
 @media(max-width:620px){.reporting-content{padding:17px}.reporting-row label{flex-basis:100%}}
+
+/* Keyboard-first accessibility: keep the skip link hidden until focused. */
+.skip-link{position:fixed;top:-72px;left:18px;z-index:1000;padding:11px 15px;background:#56dec0;color:#061c20;border-radius:8px;font-size:14px;font-weight:750;text-decoration:none}
+.skip-link:focus-visible{top:16px;outline:3px solid #f0fbff;outline-offset:3px}
+#main-content:focus{outline:none}

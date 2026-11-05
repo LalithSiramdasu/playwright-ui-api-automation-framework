@@ -100,6 +100,7 @@ export default function App() {
   const [detail, setDetail] = useState(null);
   const [busy, setBusy] = useState(false);
   const [alert, setAlert] = useState('');
+  const [refreshError, setRefreshError] = useState('');
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -113,8 +114,12 @@ export default function App() {
       setSuites(suiteList.suites);
       setProjects(registry.projects);
       setRegistryLoaded(true);
-      setAlert('');
-    } catch (error) { setAlert(error.message); }
+      setRefreshError('');
+    } catch (error) {
+      // Do not leave a stale "runner available" indication after data loss.
+      setHealth(null);
+      setRefreshError(error.message);
+    }
   }, []);
   useEffect(() => {
     refresh();
@@ -192,16 +197,18 @@ export default function App() {
   </button>;
 
   return <div className="shell">
+    <a className="skip-link" href="#main-content">Skip to main content</a>
     <aside className={`sidebar ${menuOpen ? 'sidebar-open' : ''}`}>
       <div className="brand"><div className="brand-mark"><Activity size={24} strokeWidth={2.7} /></div><div><strong>QA CONTROL</strong><span>ENGINEERING CONSOLE</span></div></div>
       <div className="workspace-pill"><span className="workspace-avatar">P</span><div><strong>{selectedProject?.name ?? 'Playwright workspace'}</strong><span>{environment} · {selectedProject?.type ?? 'loading'}</span></div></div>
       <div className="nav-caption">WORKSPACE</div>
-      <nav aria-label="Dashboard pages">{nav.map(({ id, name, icon: Icon }) => <button className={`nav-link ${view === id ? 'nav-active' : ''}`} key={id} onClick={() => chooseView(id)} type="button"><Icon size={18} /><span>{name}</span>{id === 'runs' && scopedRuns.length > 0 && <span className="nav-counter">{scopedRuns.length}</span>}</button>)}</nav>
+      <nav aria-label="Dashboard pages">{nav.map(({ id, name, icon: Icon }) => <button className={`nav-link ${view === id ? 'nav-active' : ''}`} aria-current={view === id ? 'page' : undefined} key={id} onClick={() => chooseView(id)} type="button"><Icon size={18} /><span>{name}</span>{id === 'runs' && scopedRuns.length > 0 && <span className="nav-counter">{scopedRuns.length}</span>}</button>)}</nav>
       <div className="sidebar-bottom"><div className="system-state"><span className={`live-dot ${health?.dependenciesReady ? '' : 'warning-dot'}`} /><div><strong>{health?.dependenciesReady ? 'Runner available' : 'Setup required'}</strong><span>{health?.dependenciesReady ? 'Local runner ready' : 'Install root dependencies'}</span></div></div><a href="https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework" target="_blank" rel="noopener noreferrer" className="repository-link"><Github size={17} /> GitHub repository <ExternalLink size={14} /></a></div>
     </aside>
-    <main className="main">
-      <header className="topbar"><div className="topbar-left"><IconButton aria-label="Toggle navigation" onClick={() => setMenuOpen((current) => !current)}><Menu size={19} /></IconButton><span className="breadcrumbs">Workspace <ChevronRight size={14} /> <strong>{nav.find((item) => item.id === view)?.name}</strong></span></div><div className="topbar-right"><span className="local-tag"><span className="live-dot" /> {environment.toUpperCase()} ENVIRONMENT</span><IconButton aria-label="Refresh results" onClick={refresh}><RefreshCw size={18} /></IconButton><div className="user-avatar">QA</div></div></header>
+    <main className="main" id="main-content" tabIndex={-1}>
+      <header className="topbar"><div className="topbar-left"><IconButton aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen((current) => !current)}><Menu size={19} /></IconButton><span className="breadcrumbs">Workspace <ChevronRight size={14} /> <strong>{nav.find((item) => item.id === view)?.name}</strong></span></div><div className="topbar-right"><span className="local-tag"><span className="live-dot" /> {environment.toUpperCase()} ENVIRONMENT</span><IconButton aria-label="Refresh results" onClick={refresh}><RefreshCw size={18} /></IconButton><div className="user-avatar">QA</div></div></header>
       <div className="content">
+        {refreshError && <div className="alert" role="alert"><AlertCircle size={17} /><span>Dashboard data unavailable: {refreshError}</span><IconButton aria-label="Retry dashboard data" onClick={refresh}><RefreshCw size={17} /></IconButton></div>}
         {alert && <div className="alert" role="alert"><AlertCircle size={17} /><span>{alert}</span><IconButton aria-label="Dismiss message" onClick={() => setAlert('')}><X size={17} /></IconButton></div>}
         <section className="project-context" aria-label="Testing target">
           <div className="context-intro"><span className="eyebrow">ACTIVE TEST TARGET</span><strong>{selectedProject?.name ?? 'Loading registered projects…'}</strong><small>{selectedProject?.type === 'api' ? 'REST API testing' : selectedProject?.type === 'web' ? 'Browser website testing' : 'Website and REST API testing'}</small></div>

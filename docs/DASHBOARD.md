@@ -106,3 +106,9 @@ This local tool is designed for developer workstations, not exposure on public n
 ## Validation
 
 `npm run test:server` includes dashboard API input validation, project-scoping helpers, and JSON result parser tests, alongside the existing demo API integration tests. GitHub Actions additionally installs and builds the React dashboard, runs typecheck/lint, installs browsers and executes the complete Playwright suite.
+
+## Accessibility and outage recovery (dashboard hardening)
+
+Keyboard users can press **Tab** on initial load to reach **Skip to main content**, then **Enter** to jump to the main workspace. The active sidebar page is exposed through `aria-current="page"`, and the mobile navigation toggle exposes `aria-expanded`.
+
+The dashboard distinguishes **refresh/data errors** from **user-action errors**. When a required data endpoint is unavailable, it displays an accessible error, disables new test runs rather than relying on stale health status, and offers **Retry dashboard data**. A failed run-launch or other action error is kept visible until the user dismisses it; a successful background poll no longer silently erases that error. These behaviors have dedicated Chromium browser regression tests. They improve local usability but are **not** a WCAG compliance certification or a substitute for manual accessibility auditing.

@@ -139,3 +139,9 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 - Restrict HTML report asset access to a selected run's directory after resolving symbolic links; this blocks a local report asset from referencing files outside that run.
 - Add standalone checks for legitimate reports, missing/directory paths, symlinked files/directories, and a live HTTP request against a fixture dashboard instance. Symlink tests skip only when the host OS does not grant permission to create them.
 - Keep the existing local dashboard and project-specific history intact. Verify the new commit's complete GitHub Actions run before marking the release successful.
+
+## Dashboard accessibility and error-handling hardening (pending commit-specific CI verification)
+
+- Added keyboard-accessible skip navigation, accessible active-page state, and expanded/collapsed state on the mobile navigation toggle.
+- Dashboard refresh/data failures now show a separately actionable alert and fail closed on runner readiness. Test-launch failures remain visible until dismissed even while periodic background polling continues.
+- Added three Chromium browser tests for keyboard navigation, failed project discovery/retry, and persistent launch errors across successful refreshes. Verify with `npm run test:dashboard` and full commit-specific GitHub Actions before claiming release success.
