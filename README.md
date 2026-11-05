@@ -6,6 +6,8 @@ A **real, runnable personal-project framework**, not just an assortment of test 
 
 > **Purpose:** Practice building and maintaining automation architecture. The demo shop uses intentionally fake logins, products and orders. This is **not employer experience** and the included app is **not production commerce software**.
 
+**Current portfolio release (5 November 2026):** Modules 1–10 and the local dashboard hardening are implemented, with the current evidence and defined scope in the **[Release Readiness Audit](docs/RELEASE_READINESS_AUDIT.md)**. The six registered profiles include local demo projects, external practice pilots, and a disabled starter template. An actual client-owned staging application is **not** claimed as tested.
+
 ## Included testing types
 
 | Testing type | Implementation |
@@ -72,7 +74,7 @@ playwright-ui-api-automation-framework/
 
 ```bash
 # After extracting this project, open a terminal in its root folder:
-npm install
+npm ci
 npx playwright install
 npm run test:server     # dependency-free Node integration suite
 npm run test:chromium   # UI browser tests in Chromium
@@ -93,9 +95,9 @@ Then open http://127.0.0.1:4173 and sign in with `demo@example.com` / `Password1
 The repository now includes a **React + Vite dashboard** backed by a local Node.js orchestration API. It displays actual Playwright run history, pass rates, suite execution, per-test failures, logs and HTML reports. No sample pass/fail counts are hard-coded. Reports and history are stored on your own computer, not uploaded by the dashboard.
 
 ```bash
-npm install                  # root test-runner dependencies
+npm ci                       # root test-runner dependencies (lockfile)
 npx playwright install      # one-time browser setup
-npm run dashboard:setup     # install dashboard UI dependencies
+npm --prefix dashboard ci    # install dashboard UI dependencies (lockfile)
 npm run dashboard           # build UI and start local API + web server
 ```
 
@@ -125,9 +127,9 @@ node scripts/run-project.mjs --project northline-goods --environment local --sui
 npm run test:sample-api
 ```
 
-The original `npm test` workflow is preserved. In the dashboard, existing Run buttons still default to Northline; the backend accepts explicit `projectId` and `environment` for selected runs. The visual project switcher and project-level analytics are planned for **Module 6**.
+The original `npm test` workflow is preserved. In the dashboard, existing Run buttons still default to Northline; the backend accepts explicit `projectId` and `environment` for selected runs. The visual project switcher and project/environment-scoped analytics were delivered in **Module 6**.
 
-**Safety boundary:** Module 2 only executes explicitly configured local loopback fixtures. Disabled, remote, read-only, unsupported and arbitrary script/path selections are blocked. Authorized external website/API execution needs the reusable adapters and safety policy planned for Modules 3–5. See [Module 2 runner guide](docs/PROJECT_RUNNER.md), [project profiles](docs/PROJECT_PROFILES.md), and [implementation roadmap](docs/MODULE_IMPLEMENTATION_PLAN.md).
+**Safety boundary:** The original Module 2 runner began with local loopback targets. With Modules 3–5 and 9–10, reviewed read-only HTTPS practice/staging targets can also run **only** through exact-host approval and explicit CLI opt-in; the dashboard and ordinary CI still cannot launch remote targets. Production and arbitrary script/path selections remain blocked. See [Module 2 runner guide](docs/PROJECT_RUNNER.md), [project profiles](docs/PROJECT_PROFILES.md), and [implementation roadmap](docs/MODULE_IMPLEMENTATION_PLAN.md).
 
 
 ## Module 4 — reusable REST API automation
@@ -139,7 +141,7 @@ npm run test:sample-api         # Sample REST API tests, no browser required
 npm run test:server             # Node contract + API integration checks
 ```
 
-See [API automation guide](docs/API_AUTOMATION.md). Only local fixture targets can currently execute; Module 5 is required before authorized external staging/production testing. The JSON contract helper is **not** a complete JSON Schema/OpenAPI implementation.
+See [API automation guide](docs/API_AUTOMATION.md). Module 5 subsequently introduced controlled, read-only HTTPS staging execution via CLI approval; production targets remain blocked. The JSON contract helper is **not** a complete JSON Schema/OpenAPI implementation.
 
 ## Module 5 — isolated data, credentials and approved staging
 
@@ -155,7 +157,7 @@ The React console now exposes **Project** and **Environment** selectors. Choose 
 
 The project discovery API returns only safe display metadata, never credentials or target URLs. The API runner keeps its server-side safety checks: external HTTPS staging requires separate authorization, and production remains blocked. To test the dashboard UI itself, run `npm run dashboard:build` followed by `npm run test:dashboard`.
 
-See **[the dashboard guide](docs/DASHBOARD.md)** for scope and limitations. The next planned phase is **Module 7: deeper reporting and analytics**.
+See **[the dashboard guide](docs/DASHBOARD.md)** for scope and limitations. Module 7 reporting and analytics are implemented, including scoped exports, comparisons, flaky/retry tracking, and safeguarded history deletion.
 
 ## Module 8 — project-aware CI/CD automation
 

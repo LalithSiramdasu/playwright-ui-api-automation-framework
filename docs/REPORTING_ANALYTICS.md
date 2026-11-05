@@ -36,6 +36,6 @@ Exports do not include raw logs or test errors. **HTML reports and traces may st
 - Comparing different suite/browser combinations may change case counts for reasons unrelated to a regression. Prefer the same project, environment, suite and browser when interpreting differences.
 - The report history is local JSON, not a transactional multi-user database. Concurrent independent processes writing the same history are not supported.
 
-## Next milestone
+## Delivered follow-up
 
-**Module 8** integrates project-aware CI/manual dispatch and optional scheduled smoke checks, with per-environment secrets and artifact retention. It must not automatically run unauthorized or destructive external tests.
+**Module 8** subsequently added project-aware GitHub Actions manual dispatch, an allowlisted local weekly staging simulation, and report artifact retention. Those CI workflows intentionally **do not** run unauthorized or destructive remote tests. See [CI automation](CI_AUTOMATION.md) and the [release readiness audit](RELEASE_READINESS_AUDIT.md).

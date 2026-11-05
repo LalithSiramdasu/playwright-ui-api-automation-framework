@@ -1,6 +1,6 @@
 # Multi-Project QA Framework — Module-by-Module Implementation Plan
 
-**Status:** Modules 1 and 2 implemented; Module 3 adds independent browser automation and shared website helpers. Modules 4–9 remain planned. The existing Northline Goods UI/API suite and React dashboard are working reference implementations; arbitrary real websites/APIs are **not** yet onboarded.
+**Document status:** Historical implementation design from before Modules 4–10. All ten modules have now been implemented for the personal framework. The illustrative future-facing profile examples and MVP definitions below are preserved as original planning material, **not** live configuration or current release acceptance. For current scope and verification, see the [release readiness audit](RELEASE_READINESS_AUDIT.md). Owner-authorized business-site validation remains separate and pending.
 
 **Goal:** A single local QA Control Center that selects an authorized target project and environment, runs meaningful project-specific Playwright browser/API suites, and stores independently attributable reports. Preserve Northline Goods as regression coverage.
 

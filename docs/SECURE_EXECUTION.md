@@ -1,6 +1,6 @@
 # Module 5 — safe environments, secrets and test-data isolation
 
-**Status:** Implemented local testing and opt-in staging gate; **not** a full security sandbox, proof of ownership or approval of production testing. The dashboard remains single-user, local-only, and **cannot start remote runs**. Module 6 may add an explicit, reviewed remote consent UI.
+**Status:** Implemented local testing and opt-in staging gate; **not** a full security sandbox, proof of ownership or approval of production testing. The dashboard remains single-user, local-only, and **cannot start remote runs**. Modules 6–10 retain that restriction: external runs require a separate approved CLI path, not a dashboard consent button.
 
 ## What this adds
 

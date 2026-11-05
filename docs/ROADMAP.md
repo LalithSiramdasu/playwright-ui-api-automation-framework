@@ -1,5 +1,7 @@
 # QA Automation Framework — implementation roadmap
 
+**Release status (5 November 2026):** Modules 1–10 are implemented for the **personal QA portfolio framework**. Prior milestone paragraphs preserve the phased history. See the [current release audit](RELEASE_READINESS_AUDIT.md) for what passed, its evidence, and limitations; deeper quality-engineering items below are an optional post-v1 backlog, not claims of completed testing.
+
 **Target:** a technically credible personal QA portfolio project, not a fake production SaaS app. Keep implementation evidence, API schemas, and test outcomes explicit. The GitHub repository uses `main` as the integration branch; apply new changes only after quality checks and review. A feature branch + PR can be adopted later if collaboration grows.
 
 ## Release baseline (implemented)
@@ -24,7 +26,7 @@
 - Shared typed API client and per-test fixtures support REST verbs, query parameters, bearer and API-key authentication.
 - A limited, explicitly documented JSON contract validator checks status, Content-Type and response structure.
 - Independent Sample API now includes token login and authenticated read-only endpoints with negative scenarios.
-- **Next:** Module 5 implements secrets/redaction, target authorization, test data isolation and safe execution policies for external APIs/websites.
+- **Delivered in Module 5:** secrets/redaction, target authorization, test-data isolation and read-only safe-execution policies.
 
 ## Module 5 milestone — controlled staging and isolated data
 
@@ -48,7 +50,7 @@
 - React Reports view exposes exports, comparison, accurate flaky/retry totals, and guarded single-run or scoped-history deletion.
 - Run artifacts are removed when their run is deleted or evicted by the 100-run retention cap; unrelated project history stays intact.
 - Node integration tests use an isolated temporary history directory, and dashboard browser tests exercise the controls without deleting real user data.
-- **Next:** Module 8 adds project-aware GitHub Actions, reviewed test triggers and artifact-management policies.
+- **Delivered in Module 8:** project-aware GitHub Actions, reviewed triggers, and artifact-management policies.
 
 ## Module 8 milestone — project-aware CI/CD (implemented; verify on current commit)
 
@@ -58,14 +60,14 @@
 - CI dispatch deliberately rejects remote targets and never takes arbitrary scripts, shell arguments or test paths. Separately approved remote staging needs a future review before GitHub-hosted runner execution.
 - Adds structured `reports/ci-selection.json` evidence, per-run artifact uploads with 14-day retention and independent test-module coverage.
 - CLI preflight and selection unit tests are part of the existing `npm run test:server` CI gate. **Actual manual-dispatch workflow** requires a separately initiated run and must not be reported as passed solely from the main push workflow.
-- **Next:** Module 9 onboards an authorized separate application and verifies project-specific UI/API behavior rather than generic uptime alone.
+- **Module 9 outcome:** two reviewed, opt-in **public practice services** were onboarded and separately exercised locally; a private business application was not supplied and is not claimed verified.
 
 ## Module 9 milestone — external QA practice pilots (partially accepted)
 
 - Added two opt-in, exact-host approved public practice targets: JSONPlaceholder REST API and The Internet browser automation examples.
 - Each has eight real, requirement-ID-tagged safe tests, versioned coverage manifests and `npm run pilots:validate` for offline traceability checks.
 - Dashboard lists both pilots but disables launch; only explicitly approved CLI executions can reach an external target. Scheduled and manual-dispatch CI remain local-only.
-- **Pending:** Actual Playwright evidence from the public endpoints and validation of a user-owned or explicitly authorized business application. No external requests are made during normal CI.
+- **Evidence recorded:** all eight The Internet website cases passed twice in Chromium, and all eight JSONPlaceholder API cases passed locally; see [the execution evidence](EXTERNAL_PILOT_EXECUTION_EVIDENCE.md). A user-owned or separately authorized **business application is still untested**. Normal CI intentionally makes no requests to either external target.
 
 ## Module 10 milestone — real-project onboarding toolkit
 
@@ -75,7 +77,7 @@
 - Existing registry/dashboard tests no longer require a hard-coded total of exactly six projects, so genuinely adding more projects does not break the automation framework itself.
 - **Remaining real-world milestone:** configure one user-owned or explicitly authorized project, author product-specific expected results, execute approved staging tests and archive genuine evidence. This cannot be truthfully marked complete without the target and permission.
 
-## P1 — Reliability and coverage (next)
+## P1 — Optional post-v1 reliability and coverage backlog
 
 | Work | Definition of done |
 | --- | --- |

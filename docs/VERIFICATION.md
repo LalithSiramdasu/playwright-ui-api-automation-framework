@@ -2,6 +2,8 @@
 
 This file separates evidence from earlier versions, new local checks, and planned checks. Do not reuse earlier pass counts for a different commit.
 
+**Current summary (5 November 2026):** See the [release readiness audit](RELEASE_READINESS_AUDIT.md). On baseline commit [`12e17e5`](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/commit/12e17e54f4412d41e7ebc82d066057546e801ccf), the developer's Windows logs show **110/110 Node tests and 10/10 dashboard Chromium tests passed**, and its [GitHub Actions workflow 41968401910](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41968401910) completed successfully. Historical entries below may say *pending* because they describe an earlier verification stage, not the latest release.
+
 ## Previous verified release — 2026-11-04
 
 Commit [`3aa38a25`](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/commit/3aa38a25c2eeff0692745a6ebcd61651e2b55ab7) completed GitHub Actions successfully: [workflow run 41792430740](https://github.com/LalithSiramdasu/playwright-ui-api-automation-framework/actions/runs/41792430740). That release used a separate Experience Lab and USD prices. **Its check counts must not be attributed to newer storefront code.**
@@ -148,7 +150,7 @@ These checks exercise profile validation and non-breaking dashboard discovery, *
 
 ## Dashboard pending-run restart recovery — regression coverage
 
-- On startup, persisted runs marked \`running\` **or** \`cancelling\` are converted to \`interrupted\`, with a finish timestamp and one recovery log entry. Already passed/cancelled runs remain intact.
+- On startup, persisted runs marked `running` **or** `cancelling` are converted to \`interrupted\`, with a finish timestamp and one recovery log entry. Already passed/cancelled runs remain intact.
 - Added an isolated server-level regression test that boots the dashboard twice against temporary mixed-status history, checks the HTTP response and saved JSON, and verifies recovery is not duplicated on a second restart.
 - This checks persisted dashboard state only. It does not claim an operating-system child process is necessarily terminated by a crash; ensure the local test process has stopped before restarting after a failure.
 - Verify the new commit's CI outcome and local Windows suite before considering this checkpoint complete.
