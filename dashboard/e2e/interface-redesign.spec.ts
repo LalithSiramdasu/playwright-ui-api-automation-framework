@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { mkdirSync } from 'node:fs';
 
 test('operations navigation is deep-linkable, refresh-safe and keyboard-accessible', async ({ page }) => {
   await page.goto('/');
@@ -52,4 +53,21 @@ test('run history filters provide a real reset action when there are no matches'
   await expect(page.getByText('No matching executions')).toBeVisible();
   await page.getByRole('button', { name: 'Clear filters' }).click();
   await expect(page.getByRole('textbox', { name: 'Search runs' })).toHaveValue('');
+});
+
+test('visual review captures the real dashboard at desktop and phone widths', async ({ page }) => {
+  const javascriptErrors: string[] = [];
+  page.on('pageerror', (error) => javascriptErrors.push(error.message));
+  mkdirSync('test-results/qa-editorial-preview', { recursive: true });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#overview');
+  await expect(page.locator('#project-select')).toBeVisible();
+  await page.screenshot({ path: 'test-results/qa-editorial-preview/overview-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator('#project-select')).toBeVisible();
+  await page.screenshot({ path: 'test-results/qa-editorial-preview/overview-mobile.png', fullPage: true });
+  await page.goto('/#reports');
+  await expect(page.getByRole('heading', { name: 'Available reports' })).toBeVisible();
+  await page.screenshot({ path: 'test-results/qa-editorial-preview/reports-mobile.png', fullPage: true });
+  expect(javascriptErrors).toEqual([]);
 });

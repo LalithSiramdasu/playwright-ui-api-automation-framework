@@ -65,3 +65,7 @@ Central color, radius, typography, motion and layout variables live in `dashboar
 Run `npm run dashboard:build`, `npm run test:dashboard` and the repository's full GitHub Actions workflow. The added tests cover hash navigation, mobile drawer, 320–1440px horizontal overflow and a real filter-reset button. Automated checks are **not** a WCAG 2.2 compliance audit, external penetration test or production deployment approval.
 
 The frontend is still served on `127.0.0.1:4300`, and `dashboard/data/` remains excluded from Git. This change does not introduce authentication, remote CI, new business APIs, third-party services or data migration.
+
+### Visual evidence capture
+
+The browser suite also writes **desktop 1440px overview**, **mobile 390px overview**, and **mobile 390px reports** screenshots to `test-results/qa-editorial-preview/`. GitHub Actions uploads the `test-results` artifact for review; screenshot presence is not equivalent to an independent WCAG or aesthetic certification. The screenshots use CI's fresh local demo data and do not contain a user's saved history.
