@@ -50,8 +50,9 @@ try {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ projectId: 'sample-api', environment: 'local', suite: 'api', browser: 'all' }),
   });
-  assert.equal(response.status, 202, 'Run was rejected: ' + await response.text());
-  const started = (await response.json()).run;
+  const startBody = await response.text();
+  assert.equal(response.status, 202, 'Run was rejected: ' + startBody);
+  const started = JSON.parse(startBody).run;
   const limit = Date.now() + 120000;
   let finished;
   while (Date.now() < limit) {

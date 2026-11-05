@@ -213,6 +213,12 @@ npx playwright test tests/ui/catalog.spec.ts --project=chromium
 - **GitHub Actions CI** repeats the checks automatically on pushes and pull requests.
 - **Independent test scenarios** reduce run-order dependencies and improve debugging.
 
+## Windows installer (.exe)
+
+The local QA Control Center now has an **Electron-based Windows x64 installer build** with a bundled Node.js runtime and matched Playwright Chromium, Firefox and WebKit browsers. A dedicated Windows GitHub Actions workflow packages the unsigned setup `.exe`, executes the packaged Sample API suite, and uploads the installer as a **workflow artifact**. It does **not** create a GitHub Release automatically; the repository owner publishes a release manually after reviewing and installing the generated file.
+
+See the [Windows installer setup, verification and owner-managed release guide](desktop/README.md). This desktop distribution remains **local-only**, with browser sandboxes and the current project safety policy. The existing React dashboard and its old `dashboard/data/` history are not deleted.
+
 ## CI/CD and reports
 
 The workflow at `.github/workflows/playwright.yml` is triggered on `main` pushes, pull requests and manual dispatch. It executes typecheck, lint and standalone API tests; then installs Playwright browsers and runs the whole suite. It uploads available reports as a workflow artifact even when tests fail.
