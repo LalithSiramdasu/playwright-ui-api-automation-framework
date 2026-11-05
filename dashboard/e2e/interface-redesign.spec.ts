@@ -62,12 +62,15 @@ test('visual review captures the real dashboard at desktop and phone widths', as
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/#overview');
   await expect(page.locator('#project-select')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Run selected suite' }).first()).toBeEnabled();
   await page.screenshot({ path: 'test-results/qa-editorial-preview/overview-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('#project-select')).toBeVisible();
+  await expect(page.locator('.sidebar')).not.toBeInViewport();
   await page.screenshot({ path: 'test-results/qa-editorial-preview/overview-mobile.png', fullPage: true });
   await page.goto('/#reports');
   await expect(page.getByRole('heading', { name: 'Available reports' })).toBeVisible();
+  await expect(page.locator('.sidebar')).not.toBeInViewport();
   await page.screenshot({ path: 'test-results/qa-editorial-preview/reports-mobile.png', fullPage: true });
   expect(javascriptErrors).toEqual([]);
 });

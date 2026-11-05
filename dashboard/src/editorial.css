@@ -49,7 +49,7 @@ button:disabled { opacity: .55; }
 }
 .brand-home { border: 0; width: 100%; color: inherit; background: none; text-align: left; cursor: pointer; }
 .brand { padding: 0 6px; margin: 0 0 45px; gap: 13px; }
-.brand-mark {
+.brand .brand-mark {
   background: #e0e6da; color: #18352e; box-shadow: none; border-radius: 8px;
   width: 43px; height: 43px; display: flex; align-items: center; justify-content: center;
   font-size: 15px; font-weight: 850; letter-spacing: -.07em;
