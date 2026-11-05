@@ -62,7 +62,10 @@ test('visual review captures the real dashboard at desktop and phone widths', as
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/#overview');
   await expect(page.locator('#project-select')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Run selected suite' }).first()).toBeEnabled();
+  const launch = page.getByRole('button', { name: 'Run selected suite' }).first();
+  await expect(launch).toBeEnabled();
+  // Wait for the disabled-to-ready color transition before capturing evidence.
+  await expect(launch).toHaveCSS('background-color', 'rgb(36, 110, 94)');
   await page.screenshot({ path: 'test-results/qa-editorial-preview/overview-desktop.png', fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator('#project-select')).toBeVisible();

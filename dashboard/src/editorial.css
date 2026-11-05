@@ -394,6 +394,7 @@ footer { color: #809086; border-top: 1px solid #dfe5dc; font-weight: 750; font-s
   .report-row > div:nth-child(2) { min-width: 180px; overflow-wrap: anywhere; }
   .report-row > .outline-button { margin-left: auto; }
   .reporting-workbench { grid-template-columns: minmax(0,1fr); }
+  .reporting-operations > .panel-heading > svg { display: none; }
   .reporting-operations:last-child { grid-column: auto; }
   .reporting-content { padding: 16px; }
   .reporting-row label { flex-basis: 100%; }
